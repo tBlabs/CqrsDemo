@@ -22,6 +22,11 @@ namespace CqrsDemo
 
         public Type GetByName(string name)
         {
+            if (!messageNameToType.ContainsKey(name))
+            {
+                throw new Exception($"Message {name} not found");
+            }
+
             return messageNameToType[name];
         }
     }

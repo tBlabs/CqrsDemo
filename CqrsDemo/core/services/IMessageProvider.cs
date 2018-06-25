@@ -1,4 +1,6 @@
-﻿namespace CqrsDemo
+﻿using System;
+
+namespace CqrsDemo
 {
     public interface IMessageProvider
     {

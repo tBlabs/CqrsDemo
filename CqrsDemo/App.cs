@@ -5,13 +5,25 @@ namespace CqrsDemo
     public class App
     {
         public App(IMessageBus messageBus)
-        {       
-            string messageAsJson = "{ 'name': 'SampleQuery', 'args': \"{ 'Foo': 'Bar' }\" }";
-            messageBus.Exe(messageAsJson);
+        {
+            try
+            {
+                string messageAsJson = "";
 
-            messageAsJson = "{ 'name': 'SampleCommand', 'args': \"{ 'Foo': 'Bar' }\" }";
-            messageBus.Exe(messageAsJson);
-          
+                messageAsJson = "{ 'name': 'SampleQuery', 'args': \"{ 'Foo': 'Bar' }\" }";
+                messageBus.Exe(messageAsJson);
+
+                messageAsJson = "{ 'name': 'SampleCommand', 'args': \"{ 'Foo': 'Bar' }\" }";
+                messageBus.Exe(messageAsJson);
+
+                messageAsJson = "{ 'name': 'NotExistingMessage', 'args': \"{ 'Foo': 'Bar' }\" }";
+                messageBus.Exe(messageAsJson);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
             Console.ReadKey();
         }
     }
