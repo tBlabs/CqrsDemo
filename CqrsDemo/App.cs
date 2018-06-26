@@ -12,7 +12,7 @@ namespace CqrsDemo
 
                 messageAsJson = "{ 'name': 'SampleQuery', 'args': \"{ 'Foo': 'Bar' }\" }";
                 messageBus.Exe(messageAsJson);
-
+                                
                 messageAsJson = "{ 'name': 'SampleCommand', 'args': \"{ 'Foo': 'Bar' }\" }";
                 messageBus.Exe(messageAsJson);
 

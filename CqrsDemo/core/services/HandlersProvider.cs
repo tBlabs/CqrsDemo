@@ -8,11 +8,9 @@ namespace CqrsDemo
     {
         public List<Type> Services { get; } = new List<Type>();
 
-        public HandlersProvider()
+        public HandlersProvider(Type[] solutionTypes)
         {
-            Type[] thisAssemblyTypes = Assembly.GetExecutingAssembly().GetTypes();
-
-            foreach (Type t in thisAssemblyTypes)
+            foreach (Type t in solutionTypes)
             {
                 if (!t.IsClass || !t.IsPublic || (t.IsAbstract)) continue;
 

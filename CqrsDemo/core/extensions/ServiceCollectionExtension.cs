@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,9 +16,10 @@ namespace CqrsDemo.core.extensions
             }
         }
 
-        public static void AddCQRS(this IServiceCollection collection)
+        public static void AddCqrs(this IServiceCollection collection)
         {
-            var handlersProvider = new HandlersProvider();
+            var solutionTypes = Assembly.GetExecutingAssembly().GetTypes();
+            var handlersProvider = new HandlersProvider(solutionTypes);
             collection.AddAllTransient(handlersProvider.Services);
 
             collection.AddTransient<IMessageBus, MessageBus>();

@@ -19,7 +19,7 @@ namespace CqrsDemo
 
         private static void ConfigureServices(IServiceCollection services)
         {
-            services.AddCQRS();
+            services.AddCqrs();
         }
     }
 }
