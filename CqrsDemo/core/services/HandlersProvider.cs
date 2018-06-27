@@ -12,7 +12,7 @@ namespace CqrsDemo
         {
             foreach (Type t in solutionTypes)
             {
-                if (!t.IsClass || !t.IsPublic || (t.IsAbstract)) continue;
+                if (!t.IsClass || !t.IsPublic || t.IsAbstract) continue;
 
                 var interfaces = t.GetInterfaces();
 
