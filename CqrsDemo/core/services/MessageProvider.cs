@@ -15,16 +15,28 @@ namespace CqrsDemo
 
         public IMessage Resolve(string messageAsJson)
         {
-            MessagePackage p = JsonConvert.DeserializeObject<MessagePackage>(messageAsJson);
-
-            if (p.Args == null)
+            if (messageAsJson.IsNullOrEmpty())
             {
-                throw new Exception("No message package args detected. Should be at least empty string.");
+                throw new Exception("Message can not be empty");
             }
 
-            var messageType = _messageTypeProvider.GetByName(p.Name);
-    
-            return (IMessage)JsonConvert.DeserializeObject(p.Args, messageType);
+            try
+            {
+                MessagePackage p = JsonConvert.DeserializeObject<MessagePackage>(messageAsJson);
+
+                if (p.Args == null)
+                {
+                    throw new Exception("No message package args detected. Should be at least an empty string.");
+                }
+
+                var messageType = _messageTypeProvider.GetByName(p.Name);
+
+                return (IMessage)JsonConvert.DeserializeObject(p.Args, messageType);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Invalid json input");
+            }
         }
     }
 }

@@ -18,14 +18,15 @@ namespace CqrsDemo.core.extensions
 
         public static void AddCqrs(this IServiceCollection collection)
         {
-            var solutionTypes = Assembly.GetExecutingAssembly().GetTypes();
-            var handlersProvider = new HandlersProvider(solutionTypes);
+            var assemblyTypesProvider = new AssemblyTypesProvider();
+            var handlersProvider = new HandlerProvider(assemblyTypesProvider);
             collection.AddAllTransient(handlersProvider.Services);
 
             collection.AddTransient<IMessageBus, MessageBus>();
             collection.AddSingleton<IMessageTypeProvider, MessageTypeProvider>();
             collection.AddSingleton<IMessageProvider, MessageProvider>();
             collection.AddSingleton<IHandlerTypeProvider, HandlerTypeProvider>();
+            collection.AddSingleton<IAssemblyTypesProvider, AssemblyTypesProvider>();
         }
     }
 }

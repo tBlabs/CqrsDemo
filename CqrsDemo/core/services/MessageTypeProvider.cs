@@ -10,11 +10,9 @@ namespace CqrsDemo
     {
         private readonly Dictionary<string, Type> messageNameToType = new Dictionary<string, Type>();
 
-        public MessageTypeProvider()
+        public MessageTypeProvider(IAssemblyTypesProvider thisAssemblyTypes)
         {
-            var thisAssemblyTypes = Assembly.GetExecutingAssembly().GetTypes();
-
-            messageNameToType = thisAssemblyTypes
+            messageNameToType = thisAssemblyTypes.Types
                 .Where(t => t.IsClass && t.IsPublic && !t.IsAbstract)
                 .Where(t => (typeof(IMessage)).IsAssignableFrom(t))
                 .ToDictionary(t => t.Name, t => t);

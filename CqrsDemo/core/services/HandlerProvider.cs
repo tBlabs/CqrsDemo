@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace CqrsDemo
 {
-    public class HandlersProvider
+    public class HandlerProvider
     {
         public List<Type> Services { get; } = new List<Type>();
 
-        public HandlersProvider(Type[] solutionTypes)
+        public HandlerProvider(IAssemblyTypesProvider thisAssemblyTypes)
         {
-            foreach (Type t in solutionTypes)
+            foreach (var t in thisAssemblyTypes.Types)
             {
                 if (!t.IsClass || !t.IsPublic || t.IsAbstract) continue;
 

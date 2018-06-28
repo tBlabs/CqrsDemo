@@ -6,15 +6,13 @@ using System.Text;
 
 namespace CqrsDemo
 {
-    class HandlerTypeProvider : IHandlerTypeProvider
+    public class HandlerTypeProvider : IHandlerTypeProvider
     {
         private readonly Dictionary<Type, Type> messageTypeToHandlerType = new Dictionary<Type, Type>();
 
-        public HandlerTypeProvider()
+        public HandlerTypeProvider(IAssemblyTypesProvider thisAssemblyTypes)
         {
-            var thisAssemblyTypes = Assembly.GetExecutingAssembly().GetTypes();
-
-            foreach (var t in thisAssemblyTypes)
+            foreach (var t in thisAssemblyTypes.Types)
             {
                 if (!t.IsClass || !t.IsPublic || t.IsAbstract) continue;
 
@@ -27,9 +25,9 @@ namespace CqrsDemo
                     if ((i.GetGenericTypeDefinition() != typeof(ICommandHandler<>)) &&
                         (i.GetGenericTypeDefinition() != typeof(IQueryHandler<,>))) continue;
 
-                    var message = i.GenericTypeArguments[0];
+                    var messageType = i.GenericTypeArguments[0];
 
-                    messageTypeToHandlerType.Add(message, t);
+                    messageTypeToHandlerType.Add(messageType, t);
                 }
             }
         }
