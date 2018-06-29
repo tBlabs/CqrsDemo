@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CqrsDemo.utils
+namespace Core.utils
 {
     public static class StringExtension
     {

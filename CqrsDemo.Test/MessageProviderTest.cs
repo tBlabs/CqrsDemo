@@ -4,7 +4,7 @@ using System.Text;
 using FluentAssertions;
 using Xunit;
 
-namespace CqrsDemo.Test
+namespace Core.Test
 {
     public class SampleQuery : IQuery<string>
     {

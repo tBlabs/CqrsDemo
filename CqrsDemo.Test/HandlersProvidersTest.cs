@@ -3,7 +3,7 @@ using System.Text;
 using FluentAssertions;
 using Xunit;
 
-namespace CqrsDemo.Test
+namespace Core.Test
 {
     public class Command : ICommand
     {
@@ -39,11 +39,11 @@ namespace CqrsDemo.Test
             var thisProjectTypes = new ThisAssemblyTypesProvider();
             var handlersProvider = new HandlerProvider(thisProjectTypes);
 
-            int count = handlersProvider.Services.Count;
+            int count = handlersProvider.Handlers.Count;
 
             count.Should().Be(2);
-            handlersProvider.Services.Should().Contain(typeof(CommandHandler));
-            handlersProvider.Services.Should().Contain(typeof(QueryHandler));
+            handlersProvider.Handlers.Should().Contain(typeof(CommandHandler));
+            handlersProvider.Handlers.Should().Contain(typeof(QueryHandler));
         }
 
         [Fact]
