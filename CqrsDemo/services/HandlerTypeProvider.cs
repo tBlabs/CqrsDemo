@@ -22,8 +22,8 @@ namespace Core
                 {
                     if (!i.IsGenericType) continue;
 
-                    if ((i.GetGenericTypeDefinition() != typeof(ICommandHandler<>)) &&
-                        (i.GetGenericTypeDefinition() != typeof(IQueryHandler<,>))) continue;
+                    if (i.GetGenericTypeDefinition() != typeof(ICommandHandler<>) &&
+                        i.GetGenericTypeDefinition() != typeof(IQueryHandler<,>)) continue;
 
                     var messageType = i.GenericTypeArguments[0];
 

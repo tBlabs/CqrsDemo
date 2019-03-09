@@ -2,6 +2,6 @@
 {
     public interface IMessageBus
     {
-        object Exe(string messageAsJson);
+        object ExecuteFromJson(string messageAsJson);
     }
 }

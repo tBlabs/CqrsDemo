@@ -6,7 +6,7 @@ using FluentValidation;
 
 namespace Model.validation.services
 {
-    public class MyValidator : IMyValidator
+    public class MyValidator : IValidator
     {
         public Dictionary<Type, Type> Validators { get; } = new Dictionary<Type, Type>();
 

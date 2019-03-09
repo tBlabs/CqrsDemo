@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Model.config;
 using Model.validation.services;
 
-namespace Model.config
+namespace Messages
 {
     public class DependencyInjectionConfig : IDependencyInjectionConfig
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IMyValidator, MyValidator>();
+            services.AddSingleton<IValidator, MyValidator>();
         }
     }
 }

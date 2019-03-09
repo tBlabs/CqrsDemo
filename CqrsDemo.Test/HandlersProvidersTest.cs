@@ -5,27 +5,27 @@ using Xunit;
 
 namespace Core.Test
 {
-    public class Command : ICommand
+    public class Command1 : ICommand
     {
 
     }
 
-    public class Query : IQuery<int>
+    public class Query1 : IQuery<int>
     {
 
     }
 
-    public class CommandHandler : ICommandHandler<Command>
+    public class CommandHandler : ICommandHandler<Command1>
     {
-        public void Handle(Command command)
+        public void Handle(Command1 command)
         {
             throw new NotImplementedException();
         }
     }
 
-    public class QueryHandler : IQueryHandler<Query, int>
+    public class QueryHandler : IQueryHandler<Query1, int>
     {
-        public int Handle(Query command)
+        public int Handle(Query1 query)
         {
             throw new NotImplementedException();
         }
@@ -36,8 +36,8 @@ namespace Core.Test
         [Fact]
         public void HandlersProvider_should_collect_handlers()
         {
-            var thisProjectTypes = new ThisAssemblyTypesProvider();
-            var handlersProvider = new HandlerProvider(thisProjectTypes);
+            var solutionTypesProvider = new SolutionTypesProvider();
+            var handlersProvider = new HandlerProvider(solutionTypesProvider);
 
             int count = handlersProvider.Handlers.Count;
 
@@ -49,13 +49,13 @@ namespace Core.Test
         [Fact]
         public void HandlerTypeProvider_should_collect_handlers_with_their_messages()
         {
-            var thisProjectTypes = new ThisAssemblyTypesProvider();
-            var handlersProvider = new HandlerTypeProvider(thisProjectTypes);
+            var solutionTypesProvider = new SolutionTypesProvider();
+            var handlersProvider = new HandlerTypeProvider(solutionTypesProvider);
 
-            handlersProvider.GetByMessageType(typeof(Command))
+            handlersProvider.GetByMessageType(typeof(Command1))
                 .Should().Be<CommandHandler>();
 
-            handlersProvider.GetByMessageType(typeof(Query))
+            handlersProvider.GetByMessageType(typeof(Query1))
                 .Should().Be<QueryHandler>();
         }
     }

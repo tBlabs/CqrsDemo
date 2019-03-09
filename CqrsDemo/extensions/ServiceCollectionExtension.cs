@@ -18,7 +18,7 @@ namespace Core.core.extensions
 
         public static void AddCqrs(this IServiceCollection collection)
         {
-            var assemblyTypesProvider = new AssemblyTypesProvider();
+            var assemblyTypesProvider = new SolutionTypesProvider();
             var handlerProvider = new HandlerProvider(assemblyTypesProvider);
             collection.AddAllTransient(handlerProvider.Handlers);
 
@@ -26,7 +26,7 @@ namespace Core.core.extensions
             collection.AddSingleton<IMessageTypeProvider, MessageTypeProvider>();
             collection.AddSingleton<IMessageProvider, MessageProvider>();
             collection.AddSingleton<IHandlerTypeProvider, HandlerTypeProvider>();
-            collection.AddSingleton<IAssemblyTypesProvider, AssemblyTypesProvider>();
+            collection.AddSingleton<IAssemblyTypesProvider, SolutionTypesProvider>();
         }
     }
 }

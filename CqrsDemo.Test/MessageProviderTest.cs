@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Core.Test
@@ -17,7 +18,7 @@ namespace Core.Test
 
         public MessageProviderTest()
         {
-            var thisProjectTypes = new ThisAssemblyTypesProvider();
+            var thisProjectTypes = new SolutionTypesProvider();
             var messageTypeProvider = new MessageTypeProvider(thisProjectTypes);
             messageProvider = new MessageProvider(messageTypeProvider);
         }
@@ -26,23 +27,23 @@ namespace Core.Test
         public void MessageProvider_should_not_resolve_from_empty_input()
         {
             string messageAsJson = null;
-            Action act = () => messageProvider.Resolve(messageAsJson);
+            Action action = () => messageProvider.Resolve(messageAsJson);
 
-            Assert.Throws<Exception>(act);
+            Assert.Throws<Exception>(action);
 
             messageAsJson = "";
-            act = () => messageProvider.Resolve(messageAsJson);
+            action = () => messageProvider.Resolve(messageAsJson);
 
-            Assert.Throws<Exception>(act);
+            Assert.Throws<Exception>(action);
         }
 
         [Fact]
         public void MessageProvider_should_not_resolve_from_senseless_input()
         {
             string messageAsJson = "senseless_input";
-            Action act = () => messageProvider.Resolve(messageAsJson);
+            Action action = () => messageProvider.Resolve(messageAsJson);
 
-            Assert.Throws<Exception>(act);
+            Assert.Throws<JsonReaderException>(action);
         }
 
         [Fact]
@@ -59,9 +60,9 @@ namespace Core.Test
         {
             var messageAsJson = "{ 'name': 'SampleQuery' }";
             
-            Action act = () => messageProvider.Resolve(messageAsJson);
+            Action action = () => messageProvider.Resolve(messageAsJson);
 
-            Assert.Throws<Exception>(act);
+            Assert.Throws<Exception>(action);
         }
 
         [Fact]

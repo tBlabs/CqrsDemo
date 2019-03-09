@@ -13,17 +13,17 @@ namespace Host
                 string messageAsJson = "";
 
                 messageAsJson = "{ 'name': 'SampleQuery', 'args': \"{ 'Foo': 'Bar' }\" }";
-                messageBus.Exe(messageAsJson);
+                messageBus.ExecuteFromJson(messageAsJson);
 
                 messageAsJson = "{ 'name': 'SampleCommand', 'args': \"{ 'Foo': 'Bar' }\" }";
-                messageBus.Exe(messageAsJson);
+                messageBus.ExecuteFromJson(messageAsJson);
 
                 messageAsJson = "{ 'name': 'NotExistingMessage', 'args': \"{ 'Foo': 'Bar' }\" }";
-                messageBus.Exe(messageAsJson);
+                messageBus.ExecuteFromJson(messageAsJson);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message);
             }
 
             Console.ReadKey();

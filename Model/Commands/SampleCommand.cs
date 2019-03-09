@@ -1,4 +1,6 @@
-﻿namespace Core
+﻿using Core;
+
+namespace Messages.Commands
 {
     public class SampleCommand : ICommand
     {

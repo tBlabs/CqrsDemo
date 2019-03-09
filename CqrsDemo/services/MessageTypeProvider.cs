@@ -8,7 +8,7 @@ namespace Core
 {
     public class MessageTypeProvider : IMessageTypeProvider
     {
-        private readonly Dictionary<string, Type> messageNameToType = new Dictionary<string, Type>();
+        private readonly Dictionary<string, Type> messageNameToType;
 
         public MessageTypeProvider(IAssemblyTypesProvider thisAssemblyTypes)
         {
@@ -22,7 +22,7 @@ namespace Core
         {
             if (!messageNameToType.ContainsKey(name))
             {
-                throw new Exception($"Message {name} not found");
+                throw new Exception($"Message '{name}' not found");
             }
 
             return messageNameToType[name];

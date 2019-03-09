@@ -2,7 +2,7 @@
 
 namespace Model.validation.services
 {
-    public interface IMyValidator
+    public interface IValidator
     {
         bool Validate(object type);
     }
