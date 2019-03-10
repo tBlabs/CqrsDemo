@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Core.Cqrs;
 using Messages.Commands;
 
@@ -6,9 +7,11 @@ namespace Handlers.Commands
 {
     public class Sample2CommandHandler : ICommandHandler<Sample2Command>
     {
-        public void Handle(Sample2Command command)
+        public Task Handle(Sample2Command command)
         {
             Console.WriteLine("Sample2CommandHandler.Handle()");
+
+			return Task.CompletedTask;
         }
     }
 }

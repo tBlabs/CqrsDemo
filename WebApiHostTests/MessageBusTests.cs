@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Core;
 using Core.Cqrs;
 using Messages.Dto;
 using Messages.Queries;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Shouldly;
 using Xunit;
@@ -22,14 +14,14 @@ namespace WebApiHostTests
 {
 	public class SampleMsg : IQuery<int>
 	{
-
+		public int Value { get; set; }
 	}
 
-	public class SampleHandler : IQueryHandler<SampleMsg, int>
+	public class SampleHandler : IQueryHandler<SampleMsg, Task<int>>
 	{
-		public int Handle(SampleMsg query)
+		public Task<int> Handle(SampleMsg query)
 		{
-			return 5;
+			return Task.FromResult(query.Value * 2);
 		}
 	}
 
@@ -47,7 +39,7 @@ namespace WebApiHostTests
 		[Fact]
 		public async Task LocalTest()
 		{
-			var message = new SampleMsg();
+			var message = new SampleMsg { Value = 2 };
 
 			string messageAsJson = message.ToJson();
 			var content = new StringContent(messageAsJson, Encoding.UTF8, "application/json");
@@ -57,9 +49,8 @@ namespace WebApiHostTests
 			response.EnsureSuccessStatusCode();
 			var responseContent = await response.Content.ReadAsStringAsync();
 
-			var res = JsonConvert.DeserializeObject<AppResponse<int>>(responseContent);
-			res.IsException.ShouldBeFalse();
-			res.Response.ShouldBe(5);
+			var res = JsonConvert.DeserializeObject<int>(responseContent);
+			res.ShouldBe(4);
 		}
 
 		[Fact]
@@ -75,9 +66,8 @@ namespace WebApiHostTests
 			response.EnsureSuccessStatusCode();
 			var responseContent = await response.Content.ReadAsStringAsync();
 
-			var res = JsonConvert.DeserializeObject<AppResponse<SampleQueryResponse>>(responseContent);
-			res.IsException.ShouldBeFalse();
-			res.Response.Baz.ShouldBe("Bar");
+			var res = JsonConvert.DeserializeObject<SampleQueryResponse>(responseContent);
+			res.Baz.ShouldBe("Bar");
 		}
 
 		[Fact]
@@ -90,13 +80,11 @@ namespace WebApiHostTests
 
 			var response = await client.PostAsync("/", content);
 
-			response.EnsureSuccessStatusCode();
+			response.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
 
 			var responseContent = await response.Content.ReadAsStringAsync();
 
-			var res = JsonConvert.DeserializeObject<AppResponse<string>>(responseContent);
-			res.IsException.ShouldBeTrue();
-			res.Response.ShouldBe("Exception");
+			responseContent.ShouldBe("Exception");
 		}
 	}
 }

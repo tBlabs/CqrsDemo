@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Core.Services
 {
-	public class SolutionTypesProvider : IAssemblyTypesProvider
+	public class SolutionTypesProvider : ISolutionTypesProvider
 	{
 		public Type[] Types
 		{

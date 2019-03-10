@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Core.Cqrs
 {
@@ -31,9 +29,6 @@ namespace Core.Cqrs
 			Response = e.Message;
 		}
 	}
-
-//	public class OkRes
-
 
 	public interface IAppResponse
 	{

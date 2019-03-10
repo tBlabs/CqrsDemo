@@ -1,5 +1,5 @@
 using System;
-using System.Text;
+using System.Threading.Tasks;
 using Core.Cqrs;
 using Core.Services;
 using FluentAssertions;
@@ -19,7 +19,7 @@ namespace Core.Test
 
     public class CommandHandler : ICommandHandler<Command1>
     {
-        public void Handle(Command1 command)
+        public Task Handle(Command1 command)
         {
             throw new NotImplementedException();
         }
@@ -33,7 +33,7 @@ namespace Core.Test
         }
     }
 
-    public class HandlersProvidersTest
+    public class HandlersProvidersTests
     {
         [Fact]
         public void HandlersProvider_should_collect_handlers()

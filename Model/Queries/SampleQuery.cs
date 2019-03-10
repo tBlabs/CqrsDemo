@@ -1,5 +1,4 @@
-﻿using Core;
-using Core.Cqrs;
+﻿using Core.Cqrs;
 using Messages.Dto;
 
 namespace Messages.Queries

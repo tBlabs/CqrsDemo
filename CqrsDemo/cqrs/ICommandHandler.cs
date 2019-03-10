@@ -1,7 +1,9 @@
-﻿namespace Core.Cqrs
+﻿using System.Threading.Tasks;
+
+namespace Core.Cqrs
 {
     public interface ICommandHandler<T> where T : ICommand
     {
-        void Handle(T command);
+        Task Handle(T command);
     }
 }

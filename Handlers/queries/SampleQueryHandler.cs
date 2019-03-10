@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Core;
 using Core.Cqrs;
 using Messages.Dto;
@@ -6,9 +7,9 @@ using Messages.Queries;
 
 namespace Handlers.Queries
 {
-	public class SampleQueryHandler : IQueryHandler<SampleQuery, SampleQueryResponse>
+	public class SampleQueryHandler : IQueryHandler<SampleQuery, Task<SampleQueryResponse>>
 	{
-		public SampleQueryResponse Handle(SampleQuery query)
+		public Task<SampleQueryResponse> Handle(SampleQuery query)
 		{
 			Console.WriteLine("SampleQueryHandler.Handle(" + query.ToString() + ")");
 
@@ -16,7 +17,7 @@ namespace Handlers.Queries
 
 			Console.WriteLine("return " + query.Foo);
 
-			return new SampleQueryResponse { Baz = query.Foo };
+			return Task.FromResult(new SampleQueryResponse { Baz = query.Foo });
 		}
 	}
 }

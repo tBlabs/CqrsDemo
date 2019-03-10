@@ -9,9 +9,9 @@ namespace Core.Services
     {
         private readonly Dictionary<string, Type> messageNameToType;
 
-        public MessageTypeProvider(IAssemblyTypesProvider thisAssemblyTypes)
+        public MessageTypeProvider(ISolutionTypesProvider typesProvider)
         {
-            messageNameToType = thisAssemblyTypes.Types
+            messageNameToType = typesProvider.Types
                 .Where(t => t.IsClass && t.IsPublic && !t.IsAbstract)
                 .Where(t => (typeof(IMessage)).IsAssignableFrom(t))
                 .ToDictionary(t => t.Name, t => t);

@@ -1,26 +1,27 @@
-﻿using Core;
-using System;
-using System.Reflection;
+﻿using System;
+using System.Threading.Tasks;
 using Core.Services;
 
 namespace Host
 {
     public class App
     {
-        public App(IMessageBus messageBus)
+	    private readonly IMessageBus _messageBus;
+
+	    public App(IMessageBus messageBus)
+	    {
+		    _messageBus = messageBus;
+	    }
+
+		public async Task Run()
         {
             try
             {
-                string messageAsJson = "";
+                await _messageBus.ExecuteFromJson("{ 'name': 'SampleQuery', 'args': \"{ 'Foo': 'Bar' }\" }");
 
-                messageAsJson = "{ 'name': 'SampleQuery', 'args': \"{ 'Foo': 'Bar' }\" }";
-                messageBus.ExecuteFromJson(messageAsJson);
+                await _messageBus.ExecuteFromJson("{ 'name': 'SampleCommand', 'args': \"{ 'Foo': 'Bar' }\" }");
 
-                messageAsJson = "{ 'name': 'SampleCommand', 'args': \"{ 'Foo': 'Bar' }\" }";
-                messageBus.ExecuteFromJson(messageAsJson);
-
-                messageAsJson = "{ 'name': 'NotExistingMessage', 'args': \"{ 'Foo': 'Bar' }\" }";
-                messageBus.ExecuteFromJson(messageAsJson);
+                await _messageBus.ExecuteFromJson("{ 'name': 'NotExistingMessage', 'args': \"{ 'Foo': 'Bar' }\" }");
             }
             catch (Exception ex)
             {

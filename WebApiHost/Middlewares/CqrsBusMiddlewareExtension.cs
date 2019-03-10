@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using WebApiHost.Middlewares;
 
 namespace WebApiHost
 {

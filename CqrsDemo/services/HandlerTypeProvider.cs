@@ -8,9 +8,9 @@ namespace Core.Services
     {
         private readonly Dictionary<Type, Type> messageTypeToHandlerType = new Dictionary<Type, Type>();
 
-        public HandlerTypeProvider(IAssemblyTypesProvider thisAssemblyTypes)
+        public HandlerTypeProvider(ISolutionTypesProvider thisSolutionTypes)
         {
-            foreach (var t in thisAssemblyTypes.Types)
+            foreach (var t in thisSolutionTypes.Types)
             {
                 if (!t.IsClass || !t.IsPublic || t.IsAbstract) continue;
 

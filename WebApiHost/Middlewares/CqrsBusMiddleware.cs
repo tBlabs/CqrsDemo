@@ -1,46 +1,41 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
-using Core;
-using Core.Cqrs;
 using Core.Services;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace WebApiHost
+namespace WebApiHost.Middlewares
 {
-	public class CqrsBusMiddleware // dlaczego ta klasa nie dziedziczy po interfejsie?
+	public class CqrsBusMiddleware
 	{
-		private readonly RequestDelegate _next;
-		private readonly IMessageBus _bus;
+		private readonly RequestDelegate _nextMiddleware;
+		private readonly IMessageBus _messageBus;
 
-		public CqrsBusMiddleware(RequestDelegate next,
-			//IApplicationBuilder app   // Dlaczego tego nie można aktywaować?
-			IMessageBus bus)
+		public CqrsBusMiddleware(
+			RequestDelegate nextMiddleware,
+			IMessageBus messageBus)
 		{
-			_next = next;
-			_bus = bus;
+			_nextMiddleware = nextMiddleware;
+			_messageBus = messageBus;
 		}
 
 		public async Task InvokeAsync(HttpContext context)
 		{
 			var request = context.Request.Body.ReadAsString();
-			AppResponse response;
 
 			try
 			{
-				var res = _bus.ExecuteFromJson(request);
+				var result = await _messageBus.ExecuteFromJson(request);
 
-				response = new OkResponse(res);
+				context.Response.StatusCode = (int) HttpStatusCode.OK;
+				await context.Response.WriteAsync(JsonConvert.SerializeObject(result));
 			}
 			catch (Exception e)
 			{
-				response = new ErrResponse(e);
+				context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+				await context.Response.WriteAsync(e.Message);
 			}
-
-			context.Response.StatusCode = 200;
-			await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
-
-			//	await _next(context); // Z tym nie dziala ale bez tego trace rozszerzalność!
 		}
 	}
 }

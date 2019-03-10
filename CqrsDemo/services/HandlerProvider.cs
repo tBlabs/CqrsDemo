@@ -8,9 +8,9 @@ namespace Core.Services
     {
         public List<Type> Handlers { get; } = new List<Type>();
 
-        public HandlerProvider(IAssemblyTypesProvider thisAssemblyTypes)
+        public HandlerProvider(ISolutionTypesProvider thisSolutionTypes)
         {
-            foreach (var t in thisAssemblyTypes.Types)
+            foreach (var t in thisSolutionTypes.Types)
             {
                 if (!t.IsClass || !t.IsPublic || t.IsAbstract) continue;
 

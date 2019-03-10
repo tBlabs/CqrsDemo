@@ -1,7 +1,9 @@
-﻿namespace Core.Services
+﻿using System.Threading.Tasks;
+
+namespace Core.Services
 {
     public interface IMessageBus
     {
-        object ExecuteFromJson(string messageAsJson);
+        Task<object> ExecuteFromJson(string messageAsJson);
     }
 }

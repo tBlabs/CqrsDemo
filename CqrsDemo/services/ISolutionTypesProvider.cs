@@ -2,7 +2,7 @@
 
 namespace Core.Services
 {
-    public interface IAssemblyTypesProvider
+    public interface ISolutionTypesProvider
     {
         Type[] Types { get; }
     }

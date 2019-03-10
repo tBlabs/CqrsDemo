@@ -25,7 +25,7 @@ namespace Core.Extensions
             collection.AddSingleton<IMessageTypeProvider, MessageTypeProvider>();
             collection.AddSingleton<IMessageProvider, MessageProvider>();
             collection.AddSingleton<IHandlerTypeProvider, HandlerTypeProvider>();
-            collection.AddSingleton<IAssemblyTypesProvider, SolutionTypesProvider>();
+            collection.AddSingleton<ISolutionTypesProvider, SolutionTypesProvider>();
         }
     }
 }

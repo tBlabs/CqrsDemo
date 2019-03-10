@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Core.Cqrs;
 
 namespace Core.Services
@@ -14,12 +15,12 @@ namespace Core.Services
             IMessageProvider messageProvider, 
             IHandlerTypeProvider handlerTypeProvider)
         {
-            this._serviceProvider = serviceProvider;
-            this._messageProvider = messageProvider;
-            this._handlerTypeProvider = handlerTypeProvider;
+            _serviceProvider = serviceProvider;
+            _messageProvider = messageProvider;
+            _handlerTypeProvider = handlerTypeProvider;
         }
 
-        public object ExecuteFromJson(string messageAsJson) 
+        public async Task<object> ExecuteFromJson(string messageAsJson) 
         {
             var message = _messageProvider.Resolve(messageAsJson);
             var handlerType = _handlerTypeProvider.GetByMessageType(message.GetType());
@@ -28,11 +29,11 @@ namespace Core.Services
             switch (message)
             {
                 case ICommand _:
-                    handler.Handle((dynamic)message);
+                    await handler.Handle((dynamic)message);
                     return null;              
 
                 case IQueryBase _:
-                    object returnValue = handler.Handle((dynamic)message);
+                    object returnValue = await handler.Handle((dynamic)message);
                     return returnValue;
 
                 default: throw new Exception("Invalid message type. Should be Command or Query.");

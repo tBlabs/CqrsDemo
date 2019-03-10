@@ -9,9 +9,9 @@ namespace Messages.validation.services
     {
         public Dictionary<Type, Type> Validators { get; } = new Dictionary<Type, Type>();
 
-        public MyValidator(IAssemblyTypesProvider assemblyTypes)
+        public MyValidator(ISolutionTypesProvider solutionTypes)
         {
-            foreach (var t in assemblyTypes.Types)
+            foreach (var t in solutionTypes.Types)
             {
                 if (t.IsClass && t.IsPublic && !t.IsAbstract
                     && t.IsSubclassOf(typeof(AbstractValidator<>)))
