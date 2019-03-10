@@ -1,8 +1,10 @@
 ﻿using System;
-using Core.utils;
+using Core.Cqrs;
+using Core.Exceptions;
+using Core.Extensions;
 using Newtonsoft.Json;
 
-namespace Core
+namespace Core.Services
 {
 	public class MessageProvider : IMessageProvider
 	{
@@ -10,34 +12,45 @@ namespace Core
 
 		public MessageProvider(IMessageTypeProvider messageTypeProvider)
 		{
-			this._messageTypeProvider = messageTypeProvider;
+			_messageTypeProvider = messageTypeProvider;
 		}
 
 		public IMessage Resolve(string messageAsJson)
 		{
 			if (messageAsJson.IsNullOrEmpty())
 			{
-				throw new Exception("Message can not be empty");
+				throw new EmptyMessageException();
 			}
 
-			//try
-			//{
-				MessagePackage p = JsonConvert.DeserializeObject<MessagePackage>(messageAsJson);
+			MessagePackage messagePackage = ExtractMessagePackage(messageAsJson);
 
-				if (p.Args == null)
-				{
-					throw new Exception("No message package args detected. Should be at least an empty string."); // TODO: custom exception
-				}
+			if (messagePackage.Args == null)
+			{
+				throw new NoMessageArgsException();
+			}
 
-				var messageType = _messageTypeProvider.GetByName(p.Name);
+			var messageType = _messageTypeProvider.GetByName(messagePackage.Name);
 
-				return (IMessage)JsonConvert.DeserializeObject(p.Args, messageType);
-			//}
-			//// TODO: catch custom exception
-			//catch (Exception)
-			//{
-			//	throw new Exception("Invalid json input: " + messageAsJson);
-			//}
+			var message = BuildMessage(messageType, messagePackage.Args);
+
+			return message;
+		}
+
+		private IMessage BuildMessage(Type messageType, string messagePackageArgs)
+		{
+			try
+			{
+				return (IMessage)JsonConvert.DeserializeObject(messagePackageArgs, messageType);
+			}
+			catch (Exception)
+			{
+				throw new Exception("Can not build message " + messageType.Name + " from " + messagePackageArgs);
+			}
+		}
+
+		private MessagePackage ExtractMessagePackage(string messageAsJson)
+		{
+			return JsonConvert.DeserializeObject<MessagePackage>(messageAsJson);
 		}
 	}
 }

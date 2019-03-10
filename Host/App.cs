@@ -1,6 +1,7 @@
 ﻿using Core;
 using System;
 using System.Reflection;
+using Core.Services;
 
 namespace Host
 {

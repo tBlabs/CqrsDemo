@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Core;
 using Core.Cqrs;
+using Core.Services;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -22,13 +24,20 @@ namespace WebApiHost
 		public async Task InvokeAsync(HttpContext context)
 		{
 			var request = context.Request.Body.ReadAsString();
+			AppResponse response;
 
-			var res = _bus.ExecuteFromJson(request);
+			try
+			{
+				var res = _bus.ExecuteFromJson(request);
 
-			var response = new AppResponse<object>();
-			response.IsException = false;
-			response.Response = res;
+				response = new OkResponse(res);
+			}
+			catch (Exception e)
+			{
+				response = new ErrResponse(e);
+			}
 
+			context.Response.StatusCode = 200;
 			await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
 
 			//	await _next(context); // Z tym nie dziala ale bez tego trace rozszerzalność!

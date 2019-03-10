@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
-using FluentValidation;
+using Core.Cqrs;
 
-namespace Core
+namespace Core.Services
 {
     public class MessageBus : IMessageBus
     {

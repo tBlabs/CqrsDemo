@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace Model
+﻿namespace Messages.Validators
 {
     //public class EntityValidator : AbstractValidator<Entity>
     //{

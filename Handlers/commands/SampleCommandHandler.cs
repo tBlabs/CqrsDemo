@@ -1,8 +1,8 @@
-﻿using Core;
-using System;
+﻿using System;
+using Core.Cqrs;
 using Messages.Commands;
 
-namespace Handlers
+namespace Handlers.Commands
 {
 	public class SampleCommandHandler : ICommandHandler<SampleCommand>
 	{

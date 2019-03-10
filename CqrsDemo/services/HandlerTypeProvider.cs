@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+using Core.Cqrs;
 
-namespace Core
+namespace Core.Services
 {
     public class HandlerTypeProvider : IHandlerTypeProvider
     {

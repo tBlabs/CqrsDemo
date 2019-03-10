@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Model.config;
-using Model.validation.services;
+﻿using Core.DI;
+using Messages.validation.services;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Messages
+namespace Messages.config
 {
     public class DependencyInjectionConfig : IDependencyInjectionConfig
     {

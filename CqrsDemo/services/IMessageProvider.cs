@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Core.Cqrs;
 
-namespace Core
+namespace Core.Services
 {
     public interface IMessageProvider
     {

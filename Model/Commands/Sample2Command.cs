@@ -1,4 +1,6 @@
-﻿namespace Core
+﻿using Core.Cqrs;
+
+namespace Messages.Commands
 {
     public class Sample2Command : ICommand
     {

@@ -1,4 +1,4 @@
-﻿namespace Core
+﻿namespace Core.Cqrs
 {
     public class MessagePackage
     {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Model.validation.services
+﻿namespace Messages.validation.services
 {
     public interface IValidator
     {

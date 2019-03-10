@@ -1,4 +1,4 @@
-﻿namespace Core
+﻿namespace Core.Cqrs
 {
     public interface ICommandHandler<T> where T : ICommand
     {

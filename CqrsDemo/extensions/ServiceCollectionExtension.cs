@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+using Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Core.core.extensions
+namespace Core.Extensions
 {
     public static class ServiceCollectionExtension
     {

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
+using Core.Cqrs;
 
-namespace Core
+namespace Core.Services
 {
     public class MessageTypeProvider : IMessageTypeProvider
     {
@@ -22,7 +21,7 @@ namespace Core
         {
             if (!messageNameToType.ContainsKey(name))
             {
-                throw new Exception($"Message '{name}' not found");
+                throw new Exception($"Message '{name}' not found.");
             }
 
             return messageNameToType[name];

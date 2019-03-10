@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
+using Core.Cqrs;
 
-namespace Core
+namespace Core.Services
 {
     public class HandlerProvider
     {

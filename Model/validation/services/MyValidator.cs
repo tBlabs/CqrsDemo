@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Core;
+using Core.Services;
 using FluentValidation;
 
-namespace Model.validation.services
+namespace Messages.validation.services
 {
     public class MyValidator : IValidator
     {
