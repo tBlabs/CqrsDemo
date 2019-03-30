@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Cqrs;
+using Messages.Commands;
 using Messages.Dto;
 using Messages.Queries;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -12,18 +13,21 @@ using Xunit;
 
 namespace WebApiHostTests
 {
-	public class SampleMsg : IQuery<int>
+	public class TestQuery : IQuery<int>
 	{
 		public int Value { get; set; }
 	}
 
-	public class SampleHandler : IQueryHandler<SampleMsg, Task<int>>
+	public class TestQueryHandler : IQueryHandler<TestQuery, Task<int>>
 	{
-		public Task<int> Handle(SampleMsg query)
+		public Task<int> Handle(TestQuery query)
 		{
 			return Task.FromResult(query.Value * 2);
 		}
 	}
+
+	class NotRegistered : IMessage
+	{ }
 
 	public class WebApiHostIntegrationTests : IClassFixture<WebApplicationFactory<WebApiHost.Startup>>
 	{
@@ -36,55 +40,79 @@ namespace WebApiHostTests
 			client = _factory.CreateClient();
 		}
 
-		[Fact]
-		public async Task LocalTest()
+		private async Task<(HttpStatusCode, T)> Post<T>(IMessage message)
 		{
-			var message = new SampleMsg { Value = 2 };
-
 			string messageAsJson = message.ToJson();
 			var content = new StringContent(messageAsJson, Encoding.UTF8, "application/json");
 
-			var response = await client.PostAsync("/", content);
-
-			response.EnsureSuccessStatusCode();
+			var response = await client.PostAsync("/CqrsBus", content);
 			var responseContent = await response.Content.ReadAsStringAsync();
 
-			var res = JsonConvert.DeserializeObject<int>(responseContent);
-			res.ShouldBe(4);
+			if (response.IsSuccessStatusCode)
+			{
+				var responseObject = JsonConvert.DeserializeObject<T>(responseContent);
+
+				return (response.StatusCode, responseObject);
+			}
+			else
+			{
+				return (response.StatusCode, (T)(object)responseContent);
+			}
 		}
 
 		[Fact]
-		public async Task Valid_query_should_pass()
+		public async Task Query_from_this_project_should_be_executed()
 		{
-			var message = new SampleQuery() { Foo = "Bar" };
+			var message = new TestQuery { Value = 5 };
 
-			string messageAsJson = message.ToJson();
-			var content = new StringContent(messageAsJson, Encoding.UTF8, "application/json");
+			var (httpStatus, response) = await Post<int>(message);
 
-			var response = await client.PostAsync("/", content);
+			httpStatus.ShouldBe(HttpStatusCode.OK);
+			response.ShouldBe(10);
+		}
 
-			response.EnsureSuccessStatusCode();
-			var responseContent = await response.Content.ReadAsStringAsync();
+		[Fact]
+		public async Task Command_from_another_project_should_be_executed()
+		{
+			var message = new SampleCommand { Foo = "Bar" };
 
-			var res = JsonConvert.DeserializeObject<SampleQueryResponse>(responseContent);
-			res.Baz.ShouldBe("Bar");
+			var (httpStatus, response) = await Post<object>(message);
+
+			httpStatus.ShouldBe(HttpStatusCode.OK);
+			response.ShouldBeNull();
+		}
+
+		[Fact]
+		public async Task Query_from_another_project_should_be_executed()
+		{
+			var message = new SampleQuery { Foo = "Bar" };
+
+			var (httpStatus, response) = await Post<SampleQueryResponse>(message);
+
+			httpStatus.ShouldBe(HttpStatusCode.OK);
+			response.Baz.ShouldBe("Bar");
+		}
+
+		[Fact]
+		public async Task Not_existing_message_should_return_404()
+		{
+			var message = new NotRegistered();
+
+			var (httpStatus, response) = await Post<string>(message);
+
+			httpStatus.ShouldBe(HttpStatusCode.NotFound);
+			response.ShouldBe("Message NotRegistered not found");
 		}
 
 		[Fact]
 		public async Task Handler_exception_should_be_catch()
 		{
-			var message = new SampleQuery() { Foo = "Ex" };
+			var message = new SampleQuery { Foo = "Ex" }; // Foo=Ex will make handler to throw exception
 
-			string messageAsJson = message.ToJson();
-			var content = new StringContent(messageAsJson, Encoding.UTF8, "application/json");
+			var (httpStatus, response) = await Post<string>(message);
 
-			var response = await client.PostAsync("/", content);
-
-			response.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
-
-			var responseContent = await response.Content.ReadAsStringAsync();
-
-			responseContent.ShouldBe("Exception");
+			httpStatus.ShouldBe(HttpStatusCode.InternalServerError);
+			response.ShouldBe("Exception");
 		}
 	}
 }

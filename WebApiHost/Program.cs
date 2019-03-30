@@ -1,20 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyModel;
-using Microsoft.Extensions.Logging;
 
 namespace WebApiHost
 {
 	public class Program
 	{
 		public static void Main(string[] args)
+		{
+			LoadAssembliesToAllowReflectionAccessOtherSolutionProjects();
+
+			CreateWebHostBuilder(args).Build().Run();
+		}
+
+		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+			WebHost.CreateDefaultBuilder(args)
+				.UseStartup<Startup>();
+
+		private static void LoadAssembliesToAllowReflectionAccessOtherSolutionProjects()
 		{
 			var dependencies = DependencyContext.Default.RuntimeLibraries;
 
@@ -24,17 +29,11 @@ namespace WebApiHost
 				{
 					Assembly.Load(new AssemblyName(library.Name));
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
-					Console.WriteLine(e);
+					/* do nothing with that exception */
 				}
 			}
-
-			CreateWebHostBuilder(args).Build().Run();
 		}
-
-		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-			WebHost.CreateDefaultBuilder(args)
-				.UseStartup<Startup>();
 	}
 }

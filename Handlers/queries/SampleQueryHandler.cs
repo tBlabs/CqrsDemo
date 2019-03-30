@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Core;
 using Core.Cqrs;
 using Messages.Dto;
 using Messages.Queries;

@@ -17,15 +17,15 @@ namespace Core.Extensions
 
         public static void AddCqrs(this IServiceCollection collection)
         {
-            var assemblyTypesProvider = new SolutionTypesProvider();
-            var handlerProvider = new HandlerProvider(assemblyTypesProvider);
-            collection.AddAllTransient(handlerProvider.Handlers);
+            var solutionTypesProvider = new SolutionTypesProvider();
+            var handlersProvider = new HandlersProvider(solutionTypesProvider);
 
-            collection.AddTransient<IMessageBus, MessageBus>();
-            collection.AddSingleton<IMessageTypeProvider, MessageTypeProvider>();
+			collection.AddSingleton<ISolutionTypesProvider, SolutionTypesProvider>();
+			collection.AddSingleton<IMessageTypeProvider, MessageTypeProvider>();
             collection.AddSingleton<IMessageProvider, MessageProvider>();
-            collection.AddSingleton<IHandlerTypeProvider, HandlerTypeProvider>();
-            collection.AddSingleton<ISolutionTypesProvider, SolutionTypesProvider>();
+			collection.AddSingleton<IHandlerTypeProvider, HandlerTypeProvider>();
+			collection.AddAllTransient(handlersProvider.Handlers);
+            collection.AddTransient<IMessageBus, MessageBus>();
         }
     }
 }

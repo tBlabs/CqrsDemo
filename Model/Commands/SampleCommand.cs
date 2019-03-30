@@ -1,5 +1,4 @@
-﻿using Core;
-using Core.Cqrs;
+﻿using Core.Cqrs;
 
 namespace Messages.Commands
 {

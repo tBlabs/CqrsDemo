@@ -4,11 +4,11 @@ using Core.Cqrs;
 
 namespace Core.Services
 {
-    public class HandlerProvider
+    public class HandlersProvider
     {
         public List<Type> Handlers { get; } = new List<Type>();
 
-        public HandlerProvider(ISolutionTypesProvider thisSolutionTypes)
+        public HandlersProvider(ISolutionTypesProvider thisSolutionTypes)
         {
             foreach (var t in thisSolutionTypes.Types)
             {

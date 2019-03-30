@@ -39,7 +39,7 @@ namespace Core.Test
         public void HandlersProvider_should_collect_handlers()
         {
             var solutionTypesProvider = new SolutionTypesProvider();
-            var handlersProvider = new HandlerProvider(solutionTypesProvider);
+            var handlersProvider = new HandlersProvider(solutionTypesProvider);
 
             int count = handlersProvider.Handlers.Count;
 

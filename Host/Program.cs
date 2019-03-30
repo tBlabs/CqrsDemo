@@ -11,6 +11,20 @@ namespace Host
     {
         private static void Main(string[] args)
         {
+	        LoadAssembliesToAllowReflectionAccessOtherSolutionProjects();
+
+	        IServiceCollection services = new ServiceCollection();
+			services.AddCqrs();
+            services.AddTransient<App>();
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            App app = (App) serviceProvider.GetService(typeof(App));
+
+            Task.Run(async () => { await app.Run(); }).Wait();
+        }
+
+        private static void LoadAssembliesToAllowReflectionAccessOtherSolutionProjects()
+        {
 	        var dependencies = DependencyContext.Default.RuntimeLibraries;
 
 	        foreach (var library in dependencies)
@@ -19,20 +33,11 @@ namespace Host
 		        {
 			        Assembly.Load(new AssemblyName(library.Name));
 		        }
-		        catch (Exception e)
+		        catch (Exception)
 		        {
-			      //  Console.WriteLine(e);
+			        /* do nothing with that exception */
 		        }
 	        }
-
-			IServiceCollection services = new ServiceCollection();
-			services.AddCqrs();
-            services.AddTransient<App>();
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
-
-            App app = (App) serviceProvider.GetService(typeof(App));
-
-            Task.Run(async () => { await app.Run(); }).Wait();
         }
     }
 }

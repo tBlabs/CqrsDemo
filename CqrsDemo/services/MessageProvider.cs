@@ -44,7 +44,7 @@ namespace Core.Services
 			}
 			catch (Exception)
 			{
-				throw new Exception("Can not build message " + messageType.Name + " from " + messagePackageArgs);
+				throw new Exception($"Can not build message '{messageType.Name}' from these args: '{messagePackageArgs}'");
 			}
 		}
 

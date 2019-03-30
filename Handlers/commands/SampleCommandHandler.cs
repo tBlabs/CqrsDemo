@@ -10,7 +10,7 @@ namespace Handlers.Commands
 		public Task Handle(SampleCommand command)
 		{
 			Console.WriteLine("SampleCommandHandler.Handle(" + command + ")");
-			Console.WriteLine("(don't return nothing)");
+			Console.WriteLine("(returns nothing)");
 
 			return Task.CompletedTask;
 		}
