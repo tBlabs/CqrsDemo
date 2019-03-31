@@ -5,6 +5,15 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <ApplicationIcon />
     <StartupObject />
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>tBlabs.Cqrs.Core</PackageId>
+    <Authors>tB</Authors>
+    <Company>tBlabs</Company>
+    <Product>Cqrs</Product>
+    <Description>Simple CQRS Framework for Web API development</Description>
+    <PackageProjectUrl>https://github.com/tBlabs/CqrsDemo</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tBlabs/CqrsDemo</RepositoryUrl>
+    <PackageReleaseNotes>Simple CQRS Framework for Web API development</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

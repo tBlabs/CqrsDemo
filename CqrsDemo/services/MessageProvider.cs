@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Core.Cqrs;
 using Core.Exceptions;
 using Core.Extensions;
@@ -17,40 +19,35 @@ namespace Core.Services
 
 		public IMessage Resolve(string messageAsJson)
 		{
-			if (messageAsJson.IsNullOrEmpty())
-			{
-				throw new EmptyMessageException();
-			}
+			var messageName = ExtractMessageName(messageAsJson);
+			var messageType = _messageTypeProvider.GetByName(messageName);
 
-			MessagePackage messagePackage = ExtractMessagePackage(messageAsJson);
-
-			if (messagePackage.Args == null)
-			{
-				throw new NoMessageArgsException();
-			}
-
-			var messageType = _messageTypeProvider.GetByName(messagePackage.Name);
-
-			var message = BuildMessage(messageType, messagePackage.Args);
-
-			return message;
-		}
-
-		private IMessage BuildMessage(Type messageType, string messagePackageArgs)
-		{
 			try
 			{
-				return (IMessage)JsonConvert.DeserializeObject(messagePackageArgs, messageType);
+				var dictionaryTypeForMessageToDeserialize = typeof(Dictionary<,>).MakeGenericType(typeof(string), messageType);
+
+				var messageAsDictionary = (dynamic)JsonConvert.DeserializeObject(messageAsJson, dictionaryTypeForMessageToDeserialize);
+
+				return (IMessage)messageAsDictionary[messageName];
 			}
 			catch (Exception)
 			{
-				throw new Exception($"Can not build message '{messageType.Name}' from these args: '{messagePackageArgs}'");
+				throw new InvalidMessageException();
 			}
 		}
 
-		private MessagePackage ExtractMessagePackage(string messageAsJson)
+		private string ExtractMessageName(string messageAsJson) // TODO: can be done by regex
 		{
-			return JsonConvert.DeserializeObject<MessagePackage>(messageAsJson);
+			try
+			{
+				var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(messageAsJson);
+
+				return dict.First().Key;
+			}
+			catch (Exception)
+			{
+				throw new InvalidMessageException();
+			}
 		}
 	}
 }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using Core.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 
-namespace Host
+namespace ConsoleAppHost
 {
     public class Program
     {

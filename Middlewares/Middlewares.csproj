@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <ApplicationIcon />
+    <StartupObject />
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>tBlabs.Cqrs.Middleware</PackageId>
+    <Authors>tB</Authors>
+    <Company>tBlabs</Company>
+    <Product>Cqrs</Product>
+    <Description>Middleware for Web API CQRS Framework</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CqrsDemo\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
+      <HintPath>C:\Users\tB-ThinkPad\.nuget\packages\microsoft.aspnetcore.http.abstractions\2.1.0\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\newtonsoft.json\11.0.2\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

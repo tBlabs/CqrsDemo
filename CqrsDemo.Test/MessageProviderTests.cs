@@ -19,12 +19,14 @@ namespace Core.Test
 	public class MessageProviderTest
 	{
 		private readonly IMessageProvider messageProvider;
+		private readonly IMessageProvider messageProvider2;
 
 		public MessageProviderTest()
 		{
 			var thisProjectTypes = new SolutionTypesProvider();
 			var messageTypeProvider = new MessageTypeProvider(thisProjectTypes);
 			messageProvider = new MessageProvider(messageTypeProvider);
+			messageProvider2 = new MessageProvider(messageTypeProvider);
 		}
 
 		[Fact]
@@ -32,7 +34,7 @@ namespace Core.Test
 		{
 			string messageAsJson = null;
 
-			Assert.Throws<EmptyMessageException>(() =>
+			Assert.Throws<InvalidMessageException>(() =>
 			{
 				messageProvider.Resolve(messageAsJson);
 			});
@@ -43,7 +45,7 @@ namespace Core.Test
 		{
 			var messageAsJson = "";
 
-			Assert.Throws<EmptyMessageException>(() =>
+			Assert.Throws<InvalidMessageException>(() =>
 			{
 				messageProvider.Resolve(messageAsJson);
 			});
@@ -54,7 +56,7 @@ namespace Core.Test
 		{
 			string messageAsJson = "invalid_message";
 
-			Assert.Throws<JsonReaderException>(() =>
+			Assert.Throws<InvalidMessageException>(() =>
 			{
 				messageProvider.Resolve(messageAsJson);
 			});
@@ -63,19 +65,19 @@ namespace Core.Test
 		[Fact]
 		public void MessageProvider_should_not_resolve_from_message_with_empty_args()
 		{
-			var messageAsJson = "{ 'name': 'SampleQuery', 'args': '' }";
+			var messageAsJson = "{ 'SampleQuery': { } }";
 
 			IMessage message = messageProvider.Resolve(messageAsJson);
 
-			message.Should().BeNull();
+			message.ShouldBeOfType<SampleQuery>();
 		}
 
 		[Fact]
 		public void MessageProvider_should_not_resolve_from_message_without_args()
 		{
-			var messageAsJson = "{ 'name': 'SampleQuery' }";
+			var messageAsJson = "{ 'SampleQuery' }";
 
-			Assert.Throws<NoMessageArgsException>(() =>
+			Assert.Throws<InvalidMessageException>(() =>
 			{
 				messageProvider.Resolve(messageAsJson);
 			});
@@ -84,18 +86,18 @@ namespace Core.Test
 		[Fact]
 		public void MessageProvider_should_resolve_from_valid_message()
 		{
-			var messageAsJson = "{ 'name': 'SampleQuery', 'args': \"{ 'Foo': 'Bar' }\" }";
+			var messageAsJson = "{ 'SampleQuery': { 'Foo': 'Bar' } }";
 
 			IMessage message = messageProvider.Resolve(messageAsJson);
 
-			message.Should().BeOfType<SampleQuery>();
-			message.As<SampleQuery>().Foo.Should().Be("Bar");
+			message.ShouldBeOfType<SampleQuery>();
+			message.As<SampleQuery>().Foo.ShouldBe("Bar");
 		}
-
+		
 		[Fact]
 		public void MessageProvider_should_not_resolve_from_valid_message_with_invalid_args_values()
 		{
-			var messageAsJson = "{ 'name': 'SampleQuery', 'args': \"{ 'Foo': { 'foo': 'bar' } }\" }";
+			var messageAsJson = "{ 'SampleQuery': { 'Foo': { 'foo': 'bar' } }";
 
 			Should.Throw<Exception>(() =>
 			{
@@ -104,45 +106,25 @@ namespace Core.Test
 		}
 
 		[Fact]
-		public void Json_test()
+		public void MessageProvider2_should_resolve_from_valid_message_with_invalid_args_keys()
 		{
-			var objTxt = @"{
-				'foo': 123,
-				'baz': 4,
-				'obj': { 'foo': 'barrr' },
-				'tab': [1,2,3]
-			}";
+			var messageAsJson = "{ 'SampleQuery': { 'Foo': 'bar' } }";
 
-			var obj = JsonConvert.DeserializeObject<Obj>(objTxt);
-			obj.Foo.ShouldBe("123");
-			obj.Baz.ShouldBe(4);
-			obj.obj.ShouldBeOfType<Obj2>();
-			obj.obj2.ShouldBeNull();
-			obj.Tab.Count().ShouldBe(3);
+			var message = messageProvider2.Resolve(messageAsJson);
+
+			message.ShouldBeAssignableTo<SampleQuery>();
+			message.As<SampleQuery>().Foo.ShouldBe("bar");
 		}
 
 		[Fact]
 		public void MessageProvider_should_resolve_from_valid_message_with_invalid_args_keys()
 		{
-			var messageAsJson = "{ 'name': 'SampleQuery', 'args': \"{ 'BadKey': 'Bar' }\" }";
+			var messageAsJson = "{ 'SampleQuery': { 'BadKey': 'Bar' } }";
 
 			var message = messageProvider.Resolve(messageAsJson);
 
-			message.ShouldBeAssignableTo<SampleQuery>();
-			(message as SampleQuery)?.Foo.ShouldBeNull();
+			message.ShouldBeOfType<SampleQuery>();
+			message.As<SampleQuery>().Foo.ShouldBeNull();
 		}
-	}
-
-	public class Obj
-	{
-		public string Foo { get; set; }
-		public int Baz { get; set; }
-		public Obj2 obj { get; set; }
-		public Obj2 obj2 { get; set; }
-		public IEnumerable<int> Tab { get; set; }
-	}
-	public class Obj2
-	{
-		public string Foo { get; set; }
 	}
 }

@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 using Core.Exceptions;
 using Core.Services;
 using Microsoft.AspNetCore.Http;
+using Middlewares.Extensions;
 using Newtonsoft.Json;
 
-namespace WebApiHost.Middlewares
+namespace Middlewares
 {
 	public class CqrsBusMiddleware
 	{

@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CqrsDemo\Core.csproj" />
     <ProjectReference Include="..\Handlers\Handlers.csproj" />
+    <ProjectReference Include="..\Middlewares\Middlewares.csproj" />
     <ProjectReference Include="..\Model\Messages.csproj" />
   </ItemGroup>
 

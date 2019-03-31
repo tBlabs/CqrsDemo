@@ -23,6 +23,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage", "Storage\Storage.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage.Tests", "Storage.Tests\Storage.Tests.csproj", "{C2645846-3158-46EE-B0AD-81E2777A97A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Middlewares", "Middlewares\Middlewares.csproj", "{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9D339C96-C9D7-461C-A93F-352CC64F7C8D}"
+	ProjectSection(SolutionItems) = preProject
+		NugetPush.txt = NugetPush.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +76,10 @@ Global
 		{C2645846-3158-46EE-B0AD-81E2777A97A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2645846-3158-46EE-B0AD-81E2777A97A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2645846-3158-46EE-B0AD-81E2777A97A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

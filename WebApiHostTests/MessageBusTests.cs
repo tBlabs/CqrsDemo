@@ -9,6 +9,7 @@ using Messages.Queries;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Shouldly;
+using WebApiHostTests.Helpers;
 using Xunit;
 
 namespace WebApiHostTests
@@ -40,7 +41,7 @@ namespace WebApiHostTests
 			client = _factory.CreateClient();
 		}
 
-		private async Task<(HttpStatusCode, T)> Post<T>(IMessage message)
+		private async Task<(HttpStatusCode, T)> PostMessage<T>(IMessage message)
 		{
 			string messageAsJson = message.ToJson();
 			var content = new StringContent(messageAsJson, Encoding.UTF8, "application/json");
@@ -61,11 +62,21 @@ namespace WebApiHostTests
 		}
 
 		[Fact]
+		public void Message_ToJson_extension_test()
+		{
+			var msg = new SampleQuery() { Foo = "bar" };
+
+			var json = msg.ToJson();
+
+			json.ShouldBe("{\"SampleQuery\":{\"Foo\":\"bar\"}}");
+		}
+
+		[Fact]
 		public async Task Query_from_this_project_should_be_executed()
 		{
 			var message = new TestQuery { Value = 5 };
 
-			var (httpStatus, response) = await Post<int>(message);
+			var (httpStatus, response) = await PostMessage<int>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.OK);
 			response.ShouldBe(10);
@@ -76,7 +87,7 @@ namespace WebApiHostTests
 		{
 			var message = new SampleCommand { Foo = "Bar" };
 
-			var (httpStatus, response) = await Post<object>(message);
+			var (httpStatus, response) = await PostMessage<object>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.OK);
 			response.ShouldBeNull();
@@ -87,7 +98,7 @@ namespace WebApiHostTests
 		{
 			var message = new SampleQuery { Foo = "Bar" };
 
-			var (httpStatus, response) = await Post<SampleQueryResponse>(message);
+			var (httpStatus, response) = await PostMessage<SampleQueryResponse>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.OK);
 			response.Baz.ShouldBe("Bar");
@@ -98,7 +109,7 @@ namespace WebApiHostTests
 		{
 			var message = new NotRegistered();
 
-			var (httpStatus, response) = await Post<string>(message);
+			var (httpStatus, response) = await PostMessage<string>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.NotFound);
 			response.ShouldBe("Message NotRegistered not found");
@@ -109,7 +120,7 @@ namespace WebApiHostTests
 		{
 			var message = new SampleQuery { Foo = "Ex" }; // Foo=Ex will make handler to throw exception
 
-			var (httpStatus, response) = await Post<string>(message);
+			var (httpStatus, response) = await PostMessage<string>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.InternalServerError);
 			response.ShouldBe("Exception");

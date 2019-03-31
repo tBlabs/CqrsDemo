@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Core.Services;
 
-namespace Host
+namespace ConsoleAppHost
 {
     public class App
     {

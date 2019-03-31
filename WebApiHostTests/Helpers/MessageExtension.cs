@@ -1,18 +1,18 @@
-﻿using Core.Cqrs;
+﻿using System.Collections.Generic;
+using Core.Cqrs;
 using Newtonsoft.Json;
 
-namespace WebApiHostTests
+namespace WebApiHostTests.Helpers
 {
 	public static class MessageExtension
 	{
 		public static string ToJson(this IMessage message)
 		{
-			var args = JsonConvert.SerializeObject(message);
-			MessagePackage package = new MessagePackage();
-			package.Name = message.GetType().Name;
-			package.Args = args;
-			//return "{ 'name': '" + message.GetType().Name + "', 'args': \"" + args + "\" }";
-			return JsonConvert.SerializeObject(package);
+			var messageName = message.GetType().Name;
+			var args = message;// JsonConvert.SerializeObject(message);
+			var dict = new Dictionary<string, object>() { { messageName, args } };
+
+			return JsonConvert.SerializeObject(dict);
 		}
 	}
 }

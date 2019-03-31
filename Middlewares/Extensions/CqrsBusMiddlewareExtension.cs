@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using WebApiHost.Middlewares;
 
-namespace WebApiHost
+namespace Middlewares.Extensions
 {
 	public static class CqrsBusMiddlewareExtension
 	{

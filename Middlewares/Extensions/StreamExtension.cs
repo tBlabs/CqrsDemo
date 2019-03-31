@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace WebApiHost
+namespace Middlewares.Extensions
 {
 	public static class StreamExtension
 	{
