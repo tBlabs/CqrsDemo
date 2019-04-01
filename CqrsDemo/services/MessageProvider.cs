@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Cqrs;
 using Core.Exceptions;
-using Core.Extensions;
 using Newtonsoft.Json;
 
 namespace Core.Services

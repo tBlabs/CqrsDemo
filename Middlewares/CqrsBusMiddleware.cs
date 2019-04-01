@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Core.Exceptions;
@@ -12,26 +13,50 @@ namespace Middlewares
 	public class CqrsBusMiddleware
 	{
 		private readonly RequestDelegate _nextMiddleware;
-		private readonly IMessageBus _messageBus;
+
+		private readonly CqrsBusMiddlewareOptions _options;
 
 		public CqrsBusMiddleware(
 			RequestDelegate nextMiddleware,
-			IMessageBus messageBus)
+			CqrsBusMiddlewareOptions options)
 		{
 			_nextMiddleware = nextMiddleware;
-			_messageBus = messageBus;
+			_options = options;
 		}
 
-		public async Task InvokeAsync(HttpContext context)
+		public async Task InvokeAsync(HttpContext context, IMessageBus messageBus)
 		{
-			var requestBody = context.Request.Body.ReadAsString();
 			var requestPath = context.Request.Path;
 
+			if (requestPath == "/File")
+			{
+				try
+				{
+					var stream = context.Request.Body;
+					//	var form = context.Request.Form;
+					var dir = _options.UploadedFilesDir + @"\" + Guid.NewGuid();
+					using (var file = File.Create(dir))
+					{
+						await stream.CopyToAsync(file);
+					}
+
+					context.Response.StatusCode = (int)HttpStatusCode.Created;
+					await context.Response.WriteAsync(dir);
+				}
+				catch (Exception e)
+				{
+					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+					await context.Response.WriteAsync(e.Message);
+				}
+			}
+			else
 			if (requestPath == "/CqrsBus")
 			{
 				try
 				{
-					var result = await _messageBus.ExecuteFromJson(requestBody);
+					var requestBody = context.Request.Body.ReadAsString();
+
+					var result = await messageBus.ExecuteFromJson(requestBody);
 
 					context.Response.StatusCode = (int)HttpStatusCode.OK;
 					await context.Response.WriteAsync(JsonConvert.SerializeObject(result));
