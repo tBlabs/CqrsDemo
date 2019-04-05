@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>CQRS CONNECTOR TEST</title>
+	<style>
+		span { padding-right: 12px }
+		form { border: 1px solid blue; margin-top: 30px}
+	</style>
+</head>
+<body>
+	<p>This is test</p>
+<p id="clock"></p>
+<div><span>{ "TestQuery": { "Value": 2 } }</span><span>returned</span><span id="TestQueryReturnnValue">...</span>(should be 4)<span>
+</span></div>
+<form method="post" enctype="multipart/form-data">
+	<div>
+		<label for="file">Choose file to upload</label>
+		<input type="file" id="file" name="file" multiple>
+	</div>
+	<div>
+		<button>Submit</button>
+	</div>
+</form>
+</body>
+<script>
+	class TestQuery {
+		constructor(value) {
+			this.Value = value;
+		}
+	}
+	(async () => {
+		try {
+			const message = new TestQuery(2);
+			console.log(message.name);
+			const requestBody = JSON.stringify({ [TestQuery.name]: message });
+			console.log("Sending: ", requestBody);
+			const response = await fetch('http://localhost:53151/CqrsBus', {
+				method: 'POST',
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: requestBody
+			});
+			const data = await response.text(); // await response.json();
+			console.log("Response:", data);
+			document.querySelector("#TestQueryReturnnValue").innerHTML = data;
+		}
+		catch (error) {
+			console.log("Error:", error);
+		}
+	})();
+
+
+	setInterval(() => document.querySelector("#clock").innerHTML = new Date().toLocaleTimeString(), 1000);
+</script>
+</html>

@@ -9,7 +9,7 @@ namespace WebApiHostTests.Helpers
 		public static string ToJson(this IMessage message)
 		{
 			var messageName = message.GetType().Name;
-			var args = message;// JsonConvert.SerializeObject(message);
+			var args = message; 
 			var dict = new Dictionary<string, object>() { { messageName, args } };
 
 			return JsonConvert.SerializeObject(dict);

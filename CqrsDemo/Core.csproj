@@ -14,6 +14,7 @@
     <PackageProjectUrl>https://github.com/tBlabs/CqrsDemo</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tBlabs/CqrsDemo</RepositoryUrl>
     <PackageReleaseNotes>Simple CQRS Framework for Web API development</PackageReleaseNotes>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

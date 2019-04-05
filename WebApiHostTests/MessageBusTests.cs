@@ -1,5 +1,8 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Cqrs;
@@ -9,22 +12,42 @@ using Messages.Queries;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Shouldly;
+using WebApiHost;
 using WebApiHostTests.Helpers;
 using Xunit;
 
 namespace WebApiHostTests
 {
-	public class TestQuery : IQuery<int>
+	//public class TestQuery : IQuery<int>
+	//{
+	//	public int Value { get; set; }
+	//}
+
+	//public class TestQueryHandler : IQueryHandler<TestQuery, Task<int>>
+	//{
+	//	public Task<int> Handle(TestQuery query)
+	//	{
+	//		return Task.FromResult(query.Value * 2);
+	//	}
+	//}
+	public class SavePictureCommand : ICommandHandler<SavePicture>
 	{
-		public int Value { get; set; }
+		public async Task Handle(SavePicture command)
+		{
+			//dir = _options.UploadedFilesDir + @"\" + Guid.NewGuid();
+			using (var file = File.Create(""))
+			{
+				await command.FileStream.CopyToAsync(file);
+			}
+
+			//return Task.CompletedTask;
+		}
 	}
 
-	public class TestQueryHandler : IQueryHandler<TestQuery, Task<int>>
+	public class SavePicture : ICommand
 	{
-		public Task<int> Handle(TestQuery query)
-		{
-			return Task.FromResult(query.Value * 2);
-		}
+		public int Quality { get; set; }
+		public Stream FileStream { get; set; }
 	}
 
 	class NotRegistered : IMessage
@@ -44,7 +67,8 @@ namespace WebApiHostTests
 		private async Task<(HttpStatusCode, T)> PostMessage<T>(IMessage message)
 		{
 			string messageAsJson = message.ToJson();
-			var content = new StringContent(messageAsJson, Encoding.UTF8, "application/json");
+			var content = new StringContent(messageAsJson, Encoding.UTF8);//, "application/json");
+			content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
 			var response = await client.PostAsync("/CqrsBus", content);
 			var responseContent = await response.Content.ReadAsStringAsync();
@@ -59,6 +83,22 @@ namespace WebApiHostTests
 			{
 				return (response.StatusCode, (T)(object)responseContent);
 			}
+		}
+
+		private async Task PostFile()
+		{
+			var stream = new MemoryStream();
+			var writer = new StreamWriter(stream);
+			writer.Write("Stream of bytes");
+			writer.Flush();
+			stream.Position = 0;
+			var content = new StreamContent(stream);
+			content.Headers.ContentType = new MediaTypeHeaderValue("multipart/form-data");
+			content.Headers.Add("Message", "");
+			
+			var response = await client.PostAsync("/File", content);
+
+			response.EnsureSuccessStatusCode();
 		}
 
 		[Fact]

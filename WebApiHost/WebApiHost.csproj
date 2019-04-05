@@ -17,4 +17,10 @@
     <ProjectReference Include="..\Model\Messages.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="StaticFiles\test.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -1,11 +1,26 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
+using Core.Cqrs;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyModel;
 
 namespace WebApiHost
 {
+	public class TestQuery : IQuery<int>
+	{
+		public int Value { get; set; }
+	}
+
+	public class TestQueryHandler : IQueryHandler<TestQuery, Task<int>>
+	{
+		public Task<int> Handle(TestQuery query)
+		{
+			return Task.FromResult(query.Value * 2);
+		}
+	}
+
 	public class Program
 	{
 		public static void Main(string[] args)
