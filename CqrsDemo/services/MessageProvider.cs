@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using Core.Cqrs;
 using Core.Exceptions;
+using Core.Interfaces;
 using Newtonsoft.Json;
 
 namespace Core.Services
@@ -16,7 +17,7 @@ namespace Core.Services
 			_messageTypeProvider = messageTypeProvider;
 		}
 
-		public IMessage Resolve(string messageAsJson)
+		public IMessage Resolve(string messageAsJson, Stream stream = null)
 		{
 			var messageName = ExtractMessageName(messageAsJson);
 			var messageType = _messageTypeProvider.GetByName(messageName);
@@ -27,7 +28,16 @@ namespace Core.Services
 
 				var messageAsDictionary = (dynamic)JsonConvert.DeserializeObject(messageAsJson, dictionaryTypeForMessageToDeserialize);
 
-				return (IMessage)messageAsDictionary[messageName];
+				if (stream == null)
+				{
+					return (IMessage)messageAsDictionary[messageName];
+				}
+				else
+				{
+					var message = (IMessageWithStream)messageAsDictionary[messageName];
+					message.Stream = stream;
+					return message;
+				}
 			}
 			catch (Exception)
 			{

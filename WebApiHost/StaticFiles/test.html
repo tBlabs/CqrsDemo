@@ -4,34 +4,64 @@
 	<meta charset="utf-8" />
 	<title>CQRS CONNECTOR TEST</title>
 	<style>
-		span { padding-right: 12px }
-		form { border: 1px solid blue; margin-top: 30px}
+		span {
+			padding-right: 12px
+		}
+
+		form {
+			border: 1px solid blue;
+			margin-top: 30px
+		}
 	</style>
 </head>
 <body>
 	<p>This is test</p>
-<p id="clock"></p>
-<div><span>{ "TestQuery": { "Value": 2 } }</span><span>returned</span><span id="TestQueryReturnnValue">...</span>(should be 4)<span>
-</span></div>
-<form method="post" enctype="multipart/form-data">
+	<p id="clock"></p>
 	<div>
-		<label for="file">Choose file to upload</label>
-		<input type="file" id="file" name="file" multiple>
+		<span>{ "TestQuery": { "Value": 2 } }</span><span>returned</span><span id="TestQueryReturnedValue">...</span>(should be 4)<span>
+		</span>
 	</div>
-	<div>
-		<button>Submit</button>
-	</div>
-</form>
-</body>
-<script>
+	<input type="file" id="FileSelector" name="file" multiple>
+	<button id="SendFile">SEND</button>
+<script type="text/javascript">
 	class TestQuery {
 		constructor(value) {
 			this.Value = value;
 		}
 	}
-	(async () => {
+
+	class FileCommand {
+		constructor(saveAs) {
+			this.SaveAs = saveAs;
+		}
+	}
+
+	const message = new TestQuery(2);
+
+	const sendButton = document.querySelector("#SendFile");
+	sendButton.addEventListener('click',
+		async () => {
+			console.log("Sending...");
+			const fileInput = document.querySelector("#FileSelector");
+			const file = fileInput.files[0];
+
+			const command = new FileCommand("buzz.txt");
+
+			const options = {
+				method: 'POST',
+				body: file,
+				headers: {
+					"Message": JSON.stringify({ [FileCommand.name]: command })
+				}
+			}
+			const response = await fetch('http://localhost:53151/File', options);
+			console.log(response);
+		});
+
+	
+	(async (g) => {
 		try {
-			const message = new TestQuery(2);
+				
 			console.log(message.name);
 			const requestBody = JSON.stringify({ [TestQuery.name]: message });
 			console.log("Sending: ", requestBody);
@@ -44,14 +74,15 @@
 			});
 			const data = await response.text(); // await response.json();
 			console.log("Response:", data);
-			document.querySelector("#TestQueryReturnnValue").innerHTML = data;
+			document.querySelector("#TestQueryReturnedValue").innerHTML = data;
 		}
 		catch (error) {
 			console.log("Error:", error);
 		}
 	})();
 
-
 	setInterval(() => document.querySelector("#clock").innerHTML = new Date().toLocaleTimeString(), 1000);
 </script>
+</body>
+
 </html>

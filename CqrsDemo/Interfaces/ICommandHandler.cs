@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Core.Cqrs
+namespace Core.Interfaces
 {
     public interface ICommandHandler<T> where T : ICommand
     {

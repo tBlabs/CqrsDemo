@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace Core.Services
 {
     public interface IMessageBus
     {
-        Task<object> ExecuteFromJson(string messageAsJson);
+        Task<object> Execute(string messageAsJson, Stream stream = null);
     }
 }

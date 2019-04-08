@@ -1,14 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Core.Exceptions;
+using Core.Extensions;
 using Core.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Http.Internal;
-using Microsoft.AspNetCore.WebUtilities;
 using Middlewares.Extensions;
 using Newtonsoft.Json;
 
@@ -28,104 +25,71 @@ namespace Middlewares
 			_options = options;
 		}
 
-		public async Task InvokeAsync(HttpContext context, IMessageBus messageBus)
+		public async Task InvokeAsync(HttpContext httpContext, IMessageBus messageBus)
 		{
-			//try
-			//{
-			//	//context.Request.Body.Position = 0;
-			//	var form = await context.Request.ReadFormAsync();
+			var requestPath = httpContext.Request.Path;
 
-			//}
-			//catch (Exception e)
-			//{
-			//	Console.WriteLine(e);
-			//	throw;
-			//}
-
-			var requestPath = context.Request.Path;
-			//var 
-
-			if (requestPath.Value.StartsWith("/File"))
-			{
-				try
-				{
-					//if (context.Request.HasFormContentType)
-					{
-					//	var form = await context.Request.ReadFormAsync();
-					}
-					//context.Request.EnableRewind();
-
-					Stream stream = context.Request.Body;
-					MemoryStream ms = new MemoryStream();
-					stream.CopyTo(ms);
-					//var m = ms.ToArray();
-
-					var reader = new MultipartReader(context.Request.GetMultipartBoundary(), ms);
-					
-					var mps = await reader.ReadNextSectionAsync();
-					//mps.Body
-					while (mps != null)
-					{
-						mps = await reader.ReadNextSectionAsync();
-					}
-
-					//	var boundary = context.Request.GetMultipartBoundary();
-					var dir = _options.UploadedFilesDir + @"\" + Guid.NewGuid();
-					using (var file = File.Create(dir))
-					{
-						await ms.CopyToAsync(file);
-					}
-
-					//stream.Seek(0, SeekOrigin.Begin);
-					 dir = _options.UploadedFilesDir + @"\" + Guid.NewGuid();
-					using (var file = File.Create(dir))
-					{
-						await ms.CopyToAsync(file);
-					}
-					 dir = _options.UploadedFilesDir + @"\" + Guid.NewGuid();
-					using (var file = File.Create(dir))
-					{
-						await ms.CopyToAsync(file);
-					}
-
-					ms.Dispose();
-
-					context.Response.StatusCode = (int)HttpStatusCode.Created;
-					await context.Response.WriteAsync(dir);
-				}
-				catch (Exception e)
-				{
-					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-					await context.Response.WriteAsync(e.Message);
-				}
-			}
-			else
 			if (requestPath == "/CqrsBus")
 			{
 				try
 				{
-					var requestBody = context.Request.Body.ReadAsString();
-
-					var result = await messageBus.ExecuteFromJson(requestBody);
-
-					context.Response.StatusCode = (int)HttpStatusCode.OK;
-					await context.Response.WriteAsync(JsonConvert.SerializeObject(result));
+					if (IsMessageWithStream(httpContext))
+					{
+						await ProcessMessageWithStream(httpContext, messageBus);
+					}
+					else
+					{
+						await ProcessMessage(httpContext, messageBus);
+					}
 				}
 				catch (MessageNotFoundException e)
 				{
-					context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-					await context.Response.WriteAsync(e.Message);
+					httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+					await httpContext.Response.WriteAsync(e.Message);
 				}
 				catch (Exception e)
 				{
-					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-					await context.Response.WriteAsync(e.Message);
+					httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+					await httpContext.Response.WriteAsync(e.Message);
 				}
 			}
 			else
 			{
-				await _nextMiddleware(context);
+				await _nextMiddleware(httpContext);
 			}
+		}
+
+		private bool IsMessageWithStream(HttpContext context)
+		{
+			return context.Request.Headers["Message"].ToString().IsNotEmpty();
+		}
+
+		private async Task ProcessMessage(HttpContext context, IMessageBus messageBus)
+		{
+			string message = context.Request.Body.ReadAsString();
+
+			var messageExecutionResult = await messageBus.Execute(message);
+
+			context.Response.StatusCode = (int)HttpStatusCode.OK;
+			await context.Response.WriteAsync(JsonConvert.SerializeObject(messageExecutionResult));
+		}
+
+		private async Task ProcessMessageWithStream(HttpContext context, IMessageBus messageBus)
+		{
+			Stream stream = context.Request.Body;
+			MemoryStream ms = new MemoryStream();
+			stream.CopyTo(ms);
+			var x = ms.Seek(0, SeekOrigin.Begin);
+
+			string message = context.Request.Headers["Message"];
+
+			var messageExecutionResult = await messageBus.Execute(message, ms);
+
+
+			ms.Dispose();
+
+			context.Response.StatusCode = (int)HttpStatusCode.OK;
+			await context.Response.WriteAsync(JsonConvert.SerializeObject(messageExecutionResult));
 		}
 	}
 }

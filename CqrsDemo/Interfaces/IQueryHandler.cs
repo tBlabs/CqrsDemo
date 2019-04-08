@@ -1,4 +1,4 @@
-﻿namespace Core.Cqrs
+﻿namespace Core.Interfaces
 {
     public interface IQueryHandler<in TQuery, out TResult> where TQuery : IQueryBase
     {

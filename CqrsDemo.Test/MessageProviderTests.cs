@@ -1,32 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Core.Cqrs;
+using System.IO;
 using Core.Exceptions;
+using Core.Interfaces;
 using Core.Services;
 using FluentAssertions;
-using Newtonsoft.Json;
+using Moq;
 using Shouldly;
+using WebApiHost;
 using Xunit;
 
 namespace Core.Test
 {
-	public class SampleQuery : IQuery<string>
-	{
-		public string Foo { get; set; }
-	}
-
 	public class MessageProviderTest
 	{
-		private readonly IMessageProvider messageProvider;
-		private readonly IMessageProvider messageProvider2;
+		public class SampleQuery : IQuery<string>
+		{
+			public string Foo { get; set; }
+		}
+
+		public class SampleCommandWithStream : ICommandWithStream
+		{
+			public Stream Stream { get; set; }
+			public string Foo { get; set; }
+		}
+
+		private readonly IMessageProvider sut;
 
 		public MessageProviderTest()
 		{
-			var thisProjectTypes = new SolutionTypesProvider();
-			var messageTypeProvider = new MessageTypeProvider(thisProjectTypes);
-			messageProvider = new MessageProvider(messageTypeProvider);
-			messageProvider2 = new MessageProvider(messageTypeProvider);
+			var messageTypeProviderMock = new Mock<IMessageTypeProvider>();
+			messageTypeProviderMock.Setup(x => x.GetByName(nameof(SampleQuery))).Returns(typeof(SampleQuery));
+			messageTypeProviderMock.Setup(x => x.GetByName(nameof(SampleCommandWithStream))).Returns(typeof(SampleCommandWithStream));
+
+			sut = new MessageProvider(messageTypeProviderMock.Object);
 		}
 
 		[Fact]
@@ -36,7 +42,7 @@ namespace Core.Test
 
 			Assert.Throws<InvalidMessageException>(() =>
 			{
-				messageProvider.Resolve(messageAsJson);
+				sut.Resolve(messageAsJson);
 			});
 		}
 
@@ -47,7 +53,7 @@ namespace Core.Test
 
 			Assert.Throws<InvalidMessageException>(() =>
 			{
-				messageProvider.Resolve(messageAsJson);
+				sut.Resolve(messageAsJson);
 			});
 		}
 
@@ -58,7 +64,7 @@ namespace Core.Test
 
 			Assert.Throws<InvalidMessageException>(() =>
 			{
-				messageProvider.Resolve(messageAsJson);
+				sut.Resolve(messageAsJson);
 			});
 		}
 
@@ -67,7 +73,7 @@ namespace Core.Test
 		{
 			var messageAsJson = "{ 'SampleQuery': { } }";
 
-			IMessage message = messageProvider.Resolve(messageAsJson);
+			IMessage message = sut.Resolve(messageAsJson);
 
 			message.ShouldBeOfType<SampleQuery>();
 		}
@@ -79,7 +85,7 @@ namespace Core.Test
 
 			Assert.Throws<InvalidMessageException>(() =>
 			{
-				messageProvider.Resolve(messageAsJson);
+				sut.Resolve(messageAsJson);
 			});
 		}
 
@@ -88,7 +94,7 @@ namespace Core.Test
 		{
 			var messageAsJson = "{ 'SampleQuery': { 'Foo': 'Bar' } }";
 
-			IMessage message = messageProvider.Resolve(messageAsJson);
+			IMessage message = sut.Resolve(messageAsJson);
 
 			message.ShouldBeOfType<SampleQuery>();
 			message.As<SampleQuery>().Foo.ShouldBe("Bar");
@@ -101,7 +107,7 @@ namespace Core.Test
 
 			Should.Throw<Exception>(() =>
 			{
-				messageProvider.Resolve(messageAsJson);
+				sut.Resolve(messageAsJson);
 			});
 		}
 
@@ -110,7 +116,7 @@ namespace Core.Test
 		{
 			var messageAsJson = "{ 'SampleQuery': { 'Foo': 'bar' } }";
 
-			var message = messageProvider2.Resolve(messageAsJson);
+			var message = sut.Resolve(messageAsJson);
 
 			message.ShouldBeAssignableTo<SampleQuery>();
 			message.As<SampleQuery>().Foo.ShouldBe("bar");
@@ -121,10 +127,23 @@ namespace Core.Test
 		{
 			var messageAsJson = "{ 'SampleQuery': { 'BadKey': 'Bar' } }";
 
-			var message = messageProvider.Resolve(messageAsJson);
+			var message = sut.Resolve(messageAsJson);
 
 			message.ShouldBeOfType<SampleQuery>();
 			message.As<SampleQuery>().Foo.ShouldBeNull();
+		}
+
+		[Fact]
+		public void Should_provide_message_with_stream()
+		{
+			var messageAsJson = "{ 'SampleCommandWithStream': { 'Foo': 'Bar' } }";
+			var stream = new MemoryStream();
+
+			var message = sut.Resolve(messageAsJson, stream);
+
+			message.ShouldBeOfType<SampleCommandWithStream>();
+			message.As<SampleCommandWithStream>().Stream.ShouldNotBeNull();
+			message.As<SampleCommandWithStream>().Foo.ShouldBe("Bar");
 		}
 	}
 }

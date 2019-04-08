@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core.Cqrs;
+using Core.Interfaces;
 
 namespace Core.Services
 {
@@ -8,13 +8,23 @@ namespace Core.Services
     {
         private readonly Dictionary<Type, Type> messageTypeToHandlerType = new Dictionary<Type, Type>();
 
-        public HandlerTypeProvider(ISolutionTypesProvider thisSolutionTypes)
+        public HandlerTypeProvider(ITypesProvider thisSolutionTypes)
         {
             foreach (var t in thisSolutionTypes.Types)
             {
-                if (!t.IsClass || !t.IsPublic || t.IsAbstract) continue;
+                if (!t.IsClass) continue;
+                if (t.IsAbstract) continue;
 
-                var classInterfaces = t.GetInterfaces();
+                if (!t.IsNested)
+                {
+	                if (!t.IsPublic) continue;
+                }
+                else
+                {
+	                if (!t.IsNestedPublic) continue;
+                }
+
+				var classInterfaces = t.GetInterfaces();
 
                 foreach (var i in classInterfaces)
                 {
@@ -34,7 +44,7 @@ namespace Core.Services
         {
             if (!messageTypeToHandlerType.ContainsKey(messageType))
             {
-                throw new Exception("Message not found");
+                throw new Exception($"Handler for message '{messageType.Name}' not found");
             }
 
             return messageTypeToHandlerType[messageType];

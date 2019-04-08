@@ -6,5 +6,12 @@
         {
             return string.IsNullOrEmpty(str);
         }
+
+        public static bool IsNotEmpty(this string str)
+        {
+	        str = str.Trim();
+
+	        return !str.IsNullOrEmpty();
+        }
     }
 }

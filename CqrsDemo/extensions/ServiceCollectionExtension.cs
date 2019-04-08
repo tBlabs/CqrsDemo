@@ -19,12 +19,12 @@ namespace Core.Extensions
         {
             var solutionTypesProvider = new SolutionTypesProvider();
             var handlersProvider = new HandlersProvider(solutionTypesProvider);
+            collection.AddAllTransient(handlersProvider.Handlers);
 
-			collection.AddSingleton<ISolutionTypesProvider, SolutionTypesProvider>();
+			collection.AddSingleton<ITypesProvider, SolutionTypesProvider>();
 			collection.AddSingleton<IMessageTypeProvider, MessageTypeProvider>();
             collection.AddSingleton<IMessageProvider, MessageProvider>();
 			collection.AddSingleton<IHandlerTypeProvider, HandlerTypeProvider>();
-			collection.AddAllTransient(handlersProvider.Handlers);
             collection.AddTransient<IMessageBus, MessageBus>();
         }
     }

@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CqrsDemo.Test\Core.Test.csproj" />
     <ProjectReference Include="..\WebApiHost\WebApiHost.csproj" />
   </ItemGroup>
 

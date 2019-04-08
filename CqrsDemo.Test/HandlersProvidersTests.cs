@@ -1,64 +1,64 @@
 using System;
 using System.Threading.Tasks;
-using Core.Cqrs;
+using Core.Interfaces;
 using Core.Services;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace Core.Test
 {
-    public class Command1 : ICommand
-    {
-
-    }
-
-    public class Query1 : IQuery<int>
-    {
-
-    }
-
-    public class CommandHandler : ICommandHandler<Command1>
-    {
-        public Task Handle(Command1 command)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class QueryHandler : IQueryHandler<Query1, int>
-    {
-        public int Handle(Query1 query)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class HandlersProvidersTests
     {
-        [Fact]
-        public void HandlersProvider_should_collect_handlers()
-        {
-            var solutionTypesProvider = new SolutionTypesProvider();
-            var handlersProvider = new HandlersProvider(solutionTypesProvider);
+	    public class Command : ICommand
+	    { }
 
-            int count = handlersProvider.Handlers.Count;
+	    public class Query : IQuery<int>
+	    { }
 
-            count.Should().Be(2);
-            handlersProvider.Handlers.Should().Contain(typeof(CommandHandler));
-            handlersProvider.Handlers.Should().Contain(typeof(QueryHandler));
+	    public class CommandHandler : ICommandHandler<Command>
+	    {
+		    public Task Handle(Command command)
+		    {
+			    throw new NotImplementedException();
+		    }
+	    }
+
+	    public class QueryHandler : IQueryHandler<Query, int>
+	    {
+		    public int Handle(Query query)
+		    {
+			    throw new NotImplementedException();
+		    }
+	    }
+
+	    private readonly ITypesProvider _typesProvider;
+
+	    public HandlersProvidersTests()
+	    {
+			var typesProviderMock = new Mock<ITypesProvider>();
+			typesProviderMock.Setup(x => x.Types).Returns(new Type[]
+				{typeof(Command), typeof(Query), typeof(CommandHandler), typeof(QueryHandler)});
+			_typesProvider = typesProviderMock.Object;
+	    }
+
+		[Fact]
+        public void HandlersProvider_should_collect_all_handlers()
+        {        
+            var sut = new HandlersProvider(_typesProvider);
+
+            sut.Handlers.Count.Should().Be(2);
+            sut.Handlers.Should().Contain(typeof(CommandHandler));
+            sut.Handlers.Should().Contain(typeof(QueryHandler));
         }
 
         [Fact]
-        public void HandlerTypeProvider_should_collect_handlers_with_their_messages()
+        public void HandlerTypeProvider_should_provide_handler_by_message_type()
         {
-            var solutionTypesProvider = new SolutionTypesProvider();
-            var handlersProvider = new HandlerTypeProvider(solutionTypesProvider);
+            var sut = new HandlerTypeProvider(_typesProvider);
 
-            handlersProvider.GetByMessageType(typeof(Command1))
-                .Should().Be<CommandHandler>();
-
-            handlersProvider.GetByMessageType(typeof(Query1))
-                .Should().Be<QueryHandler>();
+            sut.GetByMessageType(typeof(Command)).Should().Be<CommandHandler>();
+            sut.GetByMessageType(typeof(Query)).Should().Be<QueryHandler>();
         }
     }
 }

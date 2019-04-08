@@ -1,6 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
-using Core.Cqrs;
+using Core.Interfaces;
 
 namespace Core.Services
 {
@@ -20,9 +21,9 @@ namespace Core.Services
             _handlerTypeProvider = handlerTypeProvider;
         }
 
-        public async Task<object> ExecuteFromJson(string messageAsJson) 
+        public async Task<object> Execute(string messageAsJson, Stream stream = null) 
         {
-            var message = _messageProvider.Resolve(messageAsJson);
+            var message = _messageProvider.Resolve(messageAsJson, stream);
             var handlerType = _handlerTypeProvider.GetByMessageType(message.GetType());
             dynamic handler = _serviceProvider.GetService(handlerType);
 

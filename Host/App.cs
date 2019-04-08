@@ -17,11 +17,11 @@ namespace ConsoleAppHost
         {
             try
             {
-                await _messageBus.ExecuteFromJson("{ 'name': 'SampleQuery', 'args': \"{ 'Foo': 'Bar' }\" }");
+                await _messageBus.Execute("{ 'name': 'SampleQuery', 'args': \"{ 'Foo': 'Bar' }\" }");
 
-                await _messageBus.ExecuteFromJson("{ 'name': 'SampleCommand', 'args': \"{ 'Foo': 'Bar' }\" }");
+                await _messageBus.Execute("{ 'name': 'SampleCommand', 'args': \"{ 'Foo': 'Bar' }\" }");
 
-                await _messageBus.ExecuteFromJson("{ 'name': 'NotExistingMessage', 'args': \"{ 'Foo': 'Bar' }\" }");
+                await _messageBus.Execute("{ 'name': 'NotExistingMessage', 'args': \"{ 'Foo': 'Bar' }\" }");
             }
             catch (Exception ex)
             {

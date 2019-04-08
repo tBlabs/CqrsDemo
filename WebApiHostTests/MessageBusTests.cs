@@ -5,10 +5,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Cqrs;
+using Core.Interfaces;
+using Core.Test;
 using Messages.Commands;
 using Messages.Dto;
-using Messages.Queries;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Shouldly;
@@ -18,57 +18,24 @@ using Xunit;
 
 namespace WebApiHostTests
 {
-	//public class TestQuery : IQuery<int>
-	//{
-	//	public int Value { get; set; }
-	//}
-
-	//public class TestQueryHandler : IQueryHandler<TestQuery, Task<int>>
-	//{
-	//	public Task<int> Handle(TestQuery query)
-	//	{
-	//		return Task.FromResult(query.Value * 2);
-	//	}
-	//}
-	public class SavePictureCommand : ICommandHandler<SavePicture>
-	{
-		public async Task Handle(SavePicture command)
-		{
-			//dir = _options.UploadedFilesDir + @"\" + Guid.NewGuid();
-			using (var file = File.Create(""))
-			{
-				await command.FileStream.CopyToAsync(file);
-			}
-
-			//return Task.CompletedTask;
-		}
-	}
-
-	public class SavePicture : ICommand
-	{
-		public int Quality { get; set; }
-		public Stream FileStream { get; set; }
-	}
-
-	class NotRegistered : IMessage
-	{ }
-
 	public class WebApiHostIntegrationTests : IClassFixture<WebApplicationFactory<WebApiHost.Startup>>
 	{
-		private readonly WebApplicationFactory<WebApiHost.Startup> _factory;
+		//private readonly WebApplicationFactory<WebApiHost.Startup> _factory;
 		private readonly HttpClient client;
 
 		public WebApiHostIntegrationTests(WebApplicationFactory<WebApiHost.Startup> factory)
 		{
-			_factory = factory;
-			client = _factory.CreateClient();
+			//_factory = factory;
+			client = factory.CreateClient();
 		}
+
+		#region Helpers
 
 		private async Task<(HttpStatusCode, T)> PostMessage<T>(IMessage message)
 		{
 			string messageAsJson = message.ToJson();
-			var content = new StringContent(messageAsJson, Encoding.UTF8);//, "application/json");
-			content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+			var content = new StringContent(messageAsJson, Encoding.UTF8, "application/json");
+			//content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
 			var response = await client.PostAsync("/CqrsBus", content);
 			var responseContent = await response.Content.ReadAsStringAsync();
@@ -85,36 +52,33 @@ namespace WebApiHostTests
 			}
 		}
 
-		private async Task PostFile()
+		private async Task<(HttpStatusCode, T)> PostMessage<T>(IMessage message, Stream stream)
 		{
-			var stream = new MemoryStream();
-			var writer = new StreamWriter(stream);
-			writer.Write("Stream of bytes");
-			writer.Flush();
-			stream.Position = 0;
+			string messageAsJson = message.ToJson();
 			var content = new StreamContent(stream);
-			content.Headers.ContentType = new MediaTypeHeaderValue("multipart/form-data");
-			content.Headers.Add("Message", "");
-			
-			var response = await client.PostAsync("/File", content);
+			content.Headers.Add("Message", messageAsJson);
 
-			response.EnsureSuccessStatusCode();
+			var response = await client.PostAsync("/CqrsBus", content);
+			var responseContent = await response.Content.ReadAsStringAsync();
+
+			if (response.IsSuccessStatusCode)
+			{
+				var responseObject = JsonConvert.DeserializeObject<T>(responseContent);
+
+				return (response.StatusCode, responseObject);
+			}
+			else
+			{
+				return (response.StatusCode, (T)(object)responseContent);
+			}
 		}
 
-		[Fact]
-		public void Message_ToJson_extension_test()
-		{
-			var msg = new SampleQuery() { Foo = "bar" };
-
-			var json = msg.ToJson();
-
-			json.ShouldBe("{\"SampleQuery\":{\"Foo\":\"bar\"}}");
-		}
+		#endregion
 
 		[Fact]
 		public async Task Query_from_this_project_should_be_executed()
 		{
-			var message = new TestQuery { Value = 5 };
+			var message = new Query { Value = 5 };
 
 			var (httpStatus, response) = await PostMessage<int>(message);
 
@@ -123,9 +87,21 @@ namespace WebApiHostTests
 		}
 
 		[Fact]
+		public async Task Stream_()
+		{
+			var message = new CommandWithStream { Foo = "bar" };
+			var stream = new MemoryStream();
+
+			var (httpStatus, response) = await PostMessage<object>(message, stream);
+
+			httpStatus.ShouldBe(HttpStatusCode.OK);
+			response.ShouldBeNull();
+		}
+
+		[Fact]
 		public async Task Command_from_another_project_should_be_executed()
 		{
-			var message = new SampleCommand { Foo = "Bar" };
+			var message = new Command { Value = 3 };
 
 			var (httpStatus, response) = await PostMessage<object>(message);
 
@@ -136,34 +112,34 @@ namespace WebApiHostTests
 		[Fact]
 		public async Task Query_from_another_project_should_be_executed()
 		{
-			var message = new SampleQuery { Foo = "Bar" };
+			var message = new Query { Value = 2 };
 
-			var (httpStatus, response) = await PostMessage<SampleQueryResponse>(message);
+			var (httpStatus, response) = await PostMessage<int>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.OK);
-			response.Baz.ShouldBe("Bar");
+			response.ShouldBe(4);
 		}
 
 		[Fact]
 		public async Task Not_existing_message_should_return_404()
 		{
-			var message = new NotRegistered();
+			var message = new NotRegisteredMessage();
 
 			var (httpStatus, response) = await PostMessage<string>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.NotFound);
-			response.ShouldBe("Message NotRegistered not found");
+			response.ShouldBe("Message '" + nameof(NotRegisteredMessage) + "' not found");
 		}
 
 		[Fact]
 		public async Task Handler_exception_should_be_catch()
 		{
-			var message = new SampleQuery { Foo = "Ex" }; // Foo=Ex will make handler to throw exception
+			var message = new Query { Value = 0 }; // Value==0 will make handler to throw exception
 
 			var (httpStatus, response) = await PostMessage<string>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.InternalServerError);
-			response.ShouldBe("Exception");
+			response.ShouldBe("SomeExceptionMessage");
 		}
 	}
 }

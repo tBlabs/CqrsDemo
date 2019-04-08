@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core.Cqrs;
+using Core.Interfaces;
 
 namespace Core.Services
 {
@@ -8,11 +8,21 @@ namespace Core.Services
     {
         public List<Type> Handlers { get; } = new List<Type>();
 
-        public HandlersProvider(ISolutionTypesProvider thisSolutionTypes)
+        public HandlersProvider(ITypesProvider typesProvider)
         {
-            foreach (var t in thisSolutionTypes.Types)
+            foreach (var t in typesProvider.Types)
             {
-                if (!t.IsClass || !t.IsPublic || t.IsAbstract) continue;
+                if (!t.IsClass) continue;
+                if (t.IsAbstract) continue;
+
+				if (!t.IsNested)
+                {
+	                if (!t.IsPublic) continue;
+                }
+                else
+                {
+	                if (!t.IsNestedPublic) continue;
+                }
 
                 var interfaces = t.GetInterfaces();
 

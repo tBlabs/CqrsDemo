@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Core.Cqrs;
+using Core.Interfaces;
 using Newtonsoft.Json;
 
 namespace WebApiHostTests.Helpers
