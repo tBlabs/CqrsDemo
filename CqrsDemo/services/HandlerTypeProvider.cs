@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core.Exceptions;
 using Core.Interfaces;
 
 namespace Core.Services
@@ -44,7 +45,7 @@ namespace Core.Services
         {
             if (!messageTypeToHandlerType.ContainsKey(messageType))
             {
-                throw new Exception($"Handler for message '{messageType.Name}' not found");
+	            throw new HandlerNotFoundException(messageType);
             }
 
             return messageTypeToHandlerType[messageType];

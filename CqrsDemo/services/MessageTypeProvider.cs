@@ -13,7 +13,7 @@ namespace Core.Services
 		public MessageTypeProvider(ITypesProvider typesProvider)
 		{
 			messageNameToType = typesProvider.Types
-				.Where(t => t.IsClass && t.IsNestedPublic && t.IsPublic && !t.IsAbstract)
+				.Where(t => t.IsClass && (t.IsPublic || t.IsNestedPublic) && !t.IsAbstract)
 				.Where(t => typeof(IMessage).IsAssignableFrom(t) || typeof(IMessageWithStream).IsAssignableFrom(t))
 				.ToDictionary(t => t.Name, t => t);
 		}

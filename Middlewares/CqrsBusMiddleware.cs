@@ -47,6 +47,11 @@ namespace Middlewares
 					httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 					await httpContext.Response.WriteAsync(e.Message);
 				}
+				catch (HandlerNotFoundException e)
+				{
+					httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+					await httpContext.Response.WriteAsync(e.Message);
+				}
 				catch (Exception e)
 				{
 					httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

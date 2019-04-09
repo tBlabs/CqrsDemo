@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Core.Interfaces;
 
 namespace Core.Services
@@ -10,19 +11,21 @@ namespace Core.Services
 
         public HandlersProvider(ITypesProvider typesProvider)
         {
-            foreach (var t in typesProvider.Types)
+            foreach (var t in typesProvider.Types
+	            .Where(x=>x.IsClass && !x.IsAbstract).Where(x=>x.IsPublic || x.IsNestedPublic)
+            )
             {
-                if (!t.IsClass) continue;
-                if (t.IsAbstract) continue;
+    //            if (!t.IsClass) continue;
+    //            if (t.IsAbstract) continue;
 
-				if (!t.IsNested)
-                {
-	                if (!t.IsPublic) continue;
-                }
-                else
-                {
-	                if (!t.IsNestedPublic) continue;
-                }
+				//if (!t.IsNested)
+    //            {
+	   //             if (!t.IsPublic) continue;
+    //            }
+    //            else
+    //            {
+	   //             if (!t.IsNestedPublic) continue;
+    //            }
 
                 var interfaces = t.GetInterfaces();
 

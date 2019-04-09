@@ -10,35 +10,35 @@ namespace Core.Test
 {
     public class HandlersProvidersTests
     {
-	    public class Command : ICommand
+	    public class TestCommand : ICommand
 	    { }
 
-	    public class Query : IQuery<int>
+	    public class TestQuery : IQuery<int>
 	    { }
 
-	    public class CommandHandler : ICommandHandler<Command>
+	    public class TestCommandHandler : ICommandHandler<TestCommand>
 	    {
-		    public Task Handle(Command command)
+		    public Task Handle(TestCommand command)
 		    {
 			    throw new NotImplementedException();
 		    }
 	    }
 
-	    public class QueryHandler : IQueryHandler<Query, int>
+	    public class TestQueryHandler : IQueryHandler<TestQuery, int>
 	    {
-		    public int Handle(Query query)
+		    public int Handle(TestQuery query)
 		    {
 			    throw new NotImplementedException();
 		    }
 	    }
 
-	    private readonly ITypesProvider _typesProvider;
+	    public readonly ITypesProvider _typesProvider;
 
 	    public HandlersProvidersTests()
 	    {
 			var typesProviderMock = new Mock<ITypesProvider>();
 			typesProviderMock.Setup(x => x.Types).Returns(new Type[]
-				{typeof(Command), typeof(Query), typeof(CommandHandler), typeof(QueryHandler)});
+				{typeof(TestCommand), typeof(TestQuery), typeof(TestCommandHandler), typeof(TestQueryHandler)});
 			_typesProvider = typesProviderMock.Object;
 	    }
 
@@ -48,8 +48,8 @@ namespace Core.Test
             var sut = new HandlersProvider(_typesProvider);
 
             sut.Handlers.Count.Should().Be(2);
-            sut.Handlers.Should().Contain(typeof(CommandHandler));
-            sut.Handlers.Should().Contain(typeof(QueryHandler));
+            sut.Handlers.Should().Contain(typeof(TestCommandHandler));
+            sut.Handlers.Should().Contain(typeof(TestQueryHandler));
         }
 
         [Fact]
@@ -57,8 +57,8 @@ namespace Core.Test
         {
             var sut = new HandlerTypeProvider(_typesProvider);
 
-            sut.GetByMessageType(typeof(Command)).Should().Be<CommandHandler>();
-            sut.GetByMessageType(typeof(Query)).Should().Be<QueryHandler>();
+            sut.GetByMessageType(typeof(TestCommand)).Should().Be<TestCommandHandler>();
+            sut.GetByMessageType(typeof(TestQuery)).Should().Be<TestQueryHandler>();
         }
     }
 }

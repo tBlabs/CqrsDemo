@@ -7,7 +7,7 @@ namespace WebApiHostTests
 {
     public class MessageExtensionsTests
     {
-	    private class SampleQuery : IQuery<int>
+	    private class Message : IQuery<int>
 	    {
 		    public string Foo { get; set; }
 	    }
@@ -15,11 +15,11 @@ namespace WebApiHostTests
 	    [Fact]
 	    public void Message_ToJson_extension_test()
 	    {
-		    var msg = new SampleQuery() { Foo = "bar" };
+		    var msg = new Message() { Foo = "bar" };
 
 		    var json = msg.ToJson();
 
-		    json.ShouldBe("{\"SampleQuery\":{\"Foo\":\"bar\"}}");
+		    json.ShouldBe("{\"Message\":{\"Foo\":\"bar\"}}");
 	    }
 	}
 }

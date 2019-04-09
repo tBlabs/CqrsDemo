@@ -6,10 +6,14 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Interfaces;
+using Core.Services;
 using Core.Test;
 using Messages.Commands;
 using Messages.Dto;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Moq;
 using Newtonsoft.Json;
 using Shouldly;
 using WebApiHost;
@@ -20,6 +24,10 @@ namespace WebApiHostTests
 {
 	public class WebApiHostIntegrationTests : IClassFixture<WebApplicationFactory<WebApiHost.Startup>>
 	{
+		
+		public class NotRegisteredMessage : IMessage
+		{ }
+
 		//private readonly WebApplicationFactory<WebApiHost.Startup> _factory;
 		private readonly HttpClient client;
 
@@ -27,6 +35,18 @@ namespace WebApiHostTests
 		{
 			//_factory = factory;
 			client = factory.CreateClient();
+			//var typesProviderMock = new Mock<ITypesProvider>();
+			//typesProviderMock.Setup(x => x.Types).Returns(new Type[]
+			//{
+			//	typeof(Command), typeof(Query),
+			//	typeof(CommandHandler), typeof(QueryHandler),
+			//	typeof(CommandWithStream), typeof(CommandWithStreamHandler)
+			//});
+
+			//client = factory.WithWebHostBuilder(builder =>
+			//		builder.ConfigureServices(services =>
+			//			services.AddSingleton<ITypesProvider>(typesProviderMock.Object)))
+			//	.CreateClient();
 		}
 
 		#region Helpers
@@ -75,19 +95,31 @@ namespace WebApiHostTests
 
 		#endregion
 
+
 		[Fact]
-		public async Task Query_from_this_project_should_be_executed()
+		public async Task Command_should_be_executed()
 		{
-			var message = new Query { Value = 5 };
+			var message = new Command { Value = 3 };
+
+			var (httpStatus, response) = await PostMessage<object>(message);
+
+			httpStatus.ShouldBe(HttpStatusCode.OK);
+			response.ShouldBeNull();
+		}
+
+		[Fact]
+		public async Task Query_should_be_executed()
+		{
+			var message = new Query { Value = 2 };
 
 			var (httpStatus, response) = await PostMessage<int>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.OK);
-			response.ShouldBe(10);
+			response.ShouldBe(4);
 		}
 
 		[Fact]
-		public async Task Stream_()
+		public async Task Command_with_stream_should_be_executed()
 		{
 			var message = new CommandWithStream { Foo = "bar" };
 			var stream = new MemoryStream();
@@ -99,28 +131,6 @@ namespace WebApiHostTests
 		}
 
 		[Fact]
-		public async Task Command_from_another_project_should_be_executed()
-		{
-			var message = new Command { Value = 3 };
-
-			var (httpStatus, response) = await PostMessage<object>(message);
-
-			httpStatus.ShouldBe(HttpStatusCode.OK);
-			response.ShouldBeNull();
-		}
-
-		[Fact]
-		public async Task Query_from_another_project_should_be_executed()
-		{
-			var message = new Query { Value = 2 };
-
-			var (httpStatus, response) = await PostMessage<int>(message);
-
-			httpStatus.ShouldBe(HttpStatusCode.OK);
-			response.ShouldBe(4);
-		}
-
-		[Fact]
 		public async Task Not_existing_message_should_return_404()
 		{
 			var message = new NotRegisteredMessage();
@@ -128,7 +138,7 @@ namespace WebApiHostTests
 			var (httpStatus, response) = await PostMessage<string>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.NotFound);
-			response.ShouldBe("Message '" + nameof(NotRegisteredMessage) + "' not found");
+			response.ShouldContain("not found");
 		}
 
 		[Fact]
