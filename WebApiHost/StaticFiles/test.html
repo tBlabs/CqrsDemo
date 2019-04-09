@@ -2,87 +2,144 @@
 <html>
 <head>
 	<meta charset="utf-8" />
-	<title>CQRS CONNECTOR TEST</title>
+	<title>CQRS BUS TEST</title>
 	<style>
 		span {
 			padding-right: 12px
 		}
-
-		form {
-			border: 1px solid blue;
-			margin-top: 30px
-		}
 	</style>
 </head>
 <body>
-	<p>This is test</p>
-	<p id="clock"></p>
-	<div>
-		<span>{ "TestQuery": { "Value": 2 } }</span><span>returned</span><span id="TestQueryReturnedValue">...</span>(should be 4)<span>
-		</span>
-	</div>
-	<input type="file" id="FileSelector" name="file" multiple>
+	<span id="clock"></span><span>(should tick)</span>
+	<hr />
+	<span>{ "TestQuery": { "Value": 2 } }</span><span>returned</span><span id="TestQueryReturnedValue">...</span><span>(should be 4 with HTTP 200)</span>
+	<hr />
+	<span>{ "TestCommand": { "Foo": "bar" } }</span><span>returned</span><span id="TestCommandReturnedValue">...</span><span>(should be nothing with HTTP 200)</span>
+	<hr />
+	<span>{ "NotExistingMessage": { } }</span><span>returned</span><span id="NotExistingMessageReturnedValue">...</span><span>(should be error message with HTTP 404)</span>
+	<button id="SendNotExistingMessage">SEND</button>
+	<hr />
+	<span>Select any *.txt file from your HDD. Will be stored as 'file_from_CqrsBus_test_page.txt' in host project files!</span><input type="file" id="FileSelector" name="file" multiple><span>returned</span><span id="SaveFileCommandReturnedValue">...</span><span>(should be nothing with HTTP 200)</span>
 	<button id="SendFile">SEND</button>
-<script type="text/javascript">
-	class TestQuery {
-		constructor(value) {
-			this.Value = value;
+
+	<script type="text/javascript">
+		class TestQuery
+		{
+			constructor(value)
+			{
+				this.Value = value;
+			}
 		}
-	}
 
-	class FileCommand {
-		constructor(saveAs) {
-			this.SaveAs = saveAs;
+		class TestCommand
+		{
+			constructor(value)
+			{
+				this.Foo = value;
+			}
 		}
-	}
 
-	const message = new TestQuery(2);
+		class SaveFileCommand
+		{
+			constructor(saveAs)
+			{
+				this.SaveAs = saveAs;
+			}
+		}
 
-	const sendButton = document.querySelector("#SendFile");
-	sendButton.addEventListener('click',
-		async () => {
-			console.log("Sending...");
-			const fileInput = document.querySelector("#FileSelector");
-			const file = fileInput.files[0];
+		class MessageBus
+		{
+			static async Send(message)
+			{
+				try
+				{
+					console.log("Sending: ", message, "...");
+					const response = await fetch('http://localhost:53151/CqrsBus',
+						{
+							method: 'POST',
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify(message)
+						});
 
-			const command = new FileCommand("buzz.txt");
+					let data = await response.text(); // await response.json();
 
-			const options = {
-				method: 'POST',
-				body: file,
-				headers: {
-					"Message": JSON.stringify({ [FileCommand.name]: command })
+					console.log("Response: ", data);
+
+					if (response.ok)
+					{
+						return data;
+					}
+					else
+					{
+						throw Error(data);
+					}
+				}
+				catch (error)
+				{
+					console.log("Error:", error.message);
+					return error.message;
 				}
 			}
-			const response = await fetch('http://localhost:53151/File', options);
-			console.log(response);
+
+			static async SendWithFile(message, file)
+			{
+				try
+				{
+					console.log("Sending", message, "...");
+					const response = await fetch('http://localhost:53151/CqrsBus',
+						{
+							method: 'POST',
+							body: file,
+							headers: { "Message": JSON.stringify(message) }
+						});
+					const data = await response.text();
+					console.log("Response: ", data);
+				}
+				catch (error)
+				{
+					console.log("Error:", error);
+				}
+			}
+		}
+
+
+		OnClick("#SendFile", async () =>
+		{
+			const fileInput = document.querySelector("#FileSelector");
+			const file = fileInput.files[0];
+			const command = new SaveFileCommand("file_from_CqrsBus_test_page.txt");
+			const message = { [SaveFileCommand.name]: command };
+			const response = await MessageBus.SendWithFile(message, file);
+			document.querySelector("#NotExistingMessageReturnedValue").innerHTML = response;
 		});
 
-	
-	(async (g) => {
-		try {
-				
-			console.log(message.name);
-			const requestBody = JSON.stringify({ [TestQuery.name]: message });
-			console.log("Sending: ", requestBody);
-			const response = await fetch('http://localhost:53151/CqrsBus', {
-				method: 'POST',
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: requestBody
-			});
-			const data = await response.text(); // await response.json();
-			console.log("Response:", data);
-			document.querySelector("#TestQueryReturnedValue").innerHTML = data;
-		}
-		catch (error) {
-			console.log("Error:", error);
-		}
-	})();
+		OnClick("#SendNotExistingMessage", async () =>
+		{
+			const notExistingMessage = { NotExistingMessage: {} };
+			const response = await MessageBus.Send(notExistingMessage);
+			document.querySelector("#NotExistingMessageReturnedValue").innerHTML = response;
+		});
 
-	setInterval(() => document.querySelector("#clock").innerHTML = new Date().toLocaleTimeString(), 1000);
-</script>
+		(async () =>
+		{
+			const testQuery = new TestQuery(2);
+			const query = { [TestQuery.name]: testQuery };
+			let response = await MessageBus.Send(query);
+			document.querySelector("#TestQueryReturnedValue").innerHTML = response;
+
+			const testCommand = new TestCommand("foo");
+			const command = { [TestCommand.name]: testCommand };
+			response = await MessageBus.Send(command);
+			document.querySelector("#TestCommandReturnedValue").innerHTML = response;
+		})();
+
+		setInterval(() => document.querySelector("#clock").innerHTML = new Date().toLocaleTimeString(), 1000);
+
+		function OnClick(selector, callback)
+		{
+			document.querySelector(selector).addEventListener('click', callback);
+		}
+	</script>
 </body>
 
 </html>
