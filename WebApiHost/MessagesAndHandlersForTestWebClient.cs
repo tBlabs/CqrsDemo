@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Core.Interfaces;
 
@@ -27,7 +28,37 @@ namespace WebApiHost
 	{
 		public Task Handle(SampleCommand command)
 		{
+			if (command.Foo == "throw")
+			{
+				throw new Exception("Some exception message from SampleCommand handler");
+			}
+
 			return Task.CompletedTask;
+		}
+	}
+
+
+	public class CalculationsResponse
+	{
+		public int Sum { get; set; }
+		public int Quotient { get; set; }
+	}
+
+	public class SampleQueryReturningObject : IQuery<CalculationsResponse>
+	{
+		public int A { get; set; }
+		public int B { get; set; }
+	}
+
+	public class SampleQueryReturningObjectHandler : IQueryHandler<SampleQueryReturningObject, Task<CalculationsResponse>>
+	{
+		public Task<CalculationsResponse> Handle(SampleQueryReturningObject query)
+		{
+			return Task.FromResult(new CalculationsResponse
+			{
+				Sum = query.A + query.B,
+				Quotient = query.A * query.B
+			});
 		}
 	}
 

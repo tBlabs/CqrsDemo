@@ -66,10 +66,6 @@ namespace WebApiHostTests
 		public class NotRegisteredMessage : IMessage
 		{ }
 
-
-		public class MessageWithNoHandler : IMessage
-		{ }
-
 		private readonly HttpClient client;
 
 		public WebApiHostIntegrationTests(WebApplicationFactory<WebApiHost.Startup> factory)

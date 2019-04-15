@@ -4,34 +4,75 @@
 	<meta charset="utf-8" />
 	<title>CQRS BUS TEST</title>
 	<style>
-		span {
-			padding-right: 12px
+		* {
+			font-size: 14px;
+			background: #f8f8f8;
+		}
+
+		table {
+			width: 100%;
+			border: 1px solid #eee;
+		}
+
+		td {
+			border-top: 1px solid #ccc;
+			padding: 12px 18px;
+		}
+
+		.small {
+			font-size: 12px;
 		}
 	</style>
 </head>
 <body>
 	<span id="clock"></span><span>(should tick)</span>
-	<hr />
-	<span>{ "TestQuery": { "Value": 2 } }</span><span>returned</span><span id="TestQueryReturnedValue">...</span><span>(should be 4 with HTTP 200)</span>
-	<hr />
-	<span>{ "TestCommand": { "Foo": "bar" } }</span><span>returned</span><span id="TestCommandReturnedValue">...</span><span>(should be nothing with HTTP 200)</span>
-	<hr />
-	<span>{ "NotExistingMessage": { } }</span><span>returned</span><span id="NotExistingMessageReturnedValue">...</span><span>(should be error message with HTTP 404)</span>
-	<button id="SendNotExistingMessage">SEND</button>
-	<hr />
-	<span>Select any *.txt file from your HDD. Will be stored as 'file_from_CqrsBus_test_page.txt' in host project files!</span><input type="file" id="FileSelector" name="file" multiple><span>returned</span><span id="SaveFileCommandReturnedValue">...</span><span>(should be nothing with HTTP 200)</span>
-	<button id="SendFile">SEND</button>
-
+	<table>
+		<tr>
+			<th>Message (Command or Query)</th>
+			<th>Returned value</th>
+			<th>Should be</th>
+			<th>Action</th>
+		</tr>
+		<tr>
+			<td>{ "SampleCommand": { "Foo": "bar" } }<br /><span class="small">returning nothing</span></td>
+			<td id="SampleCommandReturnedValue">(press Send to see)</td>
+			<td>Should return nothing (null)<br /><span class="small">with HTTP 200</span></td>
+			<td><button id="SendSampleCommand">SEND</button></td>
+		</tr>
+		<tr>
+			<td>{ "SampleQuery": { "Value": 2 } }<br /><span class="small">returning primitive int</span></td>
+			<td id="SampleQueryReturnedValue">(press Send to see)</td>
+			<td>Should be 4 (int)<br /><span class="small">with HTTP 200</span></td>
+			<td><button id="SendSampleQuery">SEND</button></td>
+		</tr>
+		<tr>
+			<td>{ "SampleQueryReturningObject": { "A": 2, "B": 3 } }<br /><span class="small">returning object</span></td>
+			<td id="SampleQueryReturningObjectReturnedValue">(press Send to see)</td>
+			<td>Should be { "Sum": 5, "Quotient": 6 }<br /><span class="small">with HTTP 200</span></td>
+			<td><button id="SendSampleQueryReturningObject">SEND</button></td>
+		</tr>
+		<tr>
+			<td>{ "NotExistingMessage": { "Foo": "bar" } }<br /><span class="small">(not registered message, returning error)</span></td>
+			<td id="NotExistingMessageReturnedValue">(press Send to see)</td>
+			<td>Should be error message (string)<br /><span class="small">with HTTP 404</span></td>
+			<td><button id="SendNotExistingMessage">SEND</button><br /><span class="small">and be aware of VS Debugger</span></td>
+		</tr>
+		<tr>
+			<td>{ "SampleCommand": { "Foo": "throw" } }<br /><span class="small">returning exception (when Foo=throw)</span></td>
+			<td id="SampleCommandThrowingExceptionReturnedValue">(press Send to see)</td>
+			<td>Should return error message (string)<br /><span class="small">with HTTP 500</span></td>
+			<td><button id="SendSampleCommandThrowingException">SEND</button></td>
+		</tr>
+		<tr>
+			<td>{ "SampleSaveFileCommand": { "SaveAs": "foo.txt" } }<br /><span class="small">returning nothing</span></td>
+			<td id="SampleSaveFileCommandReturnedValue">(press Send to see)</td>
+			<td>Should return nothing<br /><span class="small">with HTTP 200</span></td>
+			<td><input type="file" id="FileSelector" name="file" multiple><button id="SendFile">SEND</button></td>
+		</tr>
+	</table>
 	<script type="text/javascript">
-		class TestQuery
-		{
-			constructor(value)
-			{
-				this.Value = value;
-			}
-		}
 
-		class TestCommand
+		class SampleCommand
 		{
 			constructor(value)
 			{
@@ -39,7 +80,29 @@
 			}
 		}
 
-		class SaveFileCommand
+		class SampleQuery
+		{
+			constructor(value)
+			{
+				this.Value = value;
+			}
+		}
+
+		class SampleCommandReturningObject
+		{
+		}
+
+		class SampleQueryReturningObject
+		{
+			constructor(a, b)
+			{
+				this.A = a;
+				this.B = b;
+			}
+		}
+
+
+		class SampleSaveFileCommand
 		{
 			constructor(saveAs)
 			{
@@ -49,7 +112,7 @@
 
 		class MessageBus
 		{
-			static async Send(message)
+			static async Send(message, returnedType)
 			{
 				try
 				{
@@ -61,7 +124,15 @@
 							body: JSON.stringify(message)
 						});
 
-					let data = await response.text(); // await response.json();
+					let data = null;
+					if (returnedType === "primitive")
+					{
+						data = await response.text();
+					}
+					else if (returnedType === "object")
+					{
+						data = await response.json();
+					}
 
 					console.log("Response: ", data);
 
@@ -77,7 +148,7 @@
 				catch (error)
 				{
 					console.log("Error:", error.message);
-					return error.message;
+					throw error.message;
 				}
 			}
 
@@ -98,46 +169,90 @@
 				catch (error)
 				{
 					console.log("Error:", error);
+					return error.message;
 				}
 			}
 		}
+
+		OnClick("#SendSampleCommand", async () =>
+		{
+			const command = new SampleCommand("bar");
+			const message = { [SampleCommand.name]: command };
+			const response = await MessageBus.Send(message, "primitive");
+			Set("#SampleCommandReturnedValue", response);
+		});
+
+		OnClick("#SendSampleQuery", async () =>
+		{
+			const command = new SampleQuery(2);
+			const message = { [SampleQuery.name]: command };
+			const response = await MessageBus.Send(message, "primitive");
+			Set("#SampleQueryReturnedValue", response);
+		});
+
+		OnClick("#SendSampleQueryReturningObject", async () =>
+		{
+			const command = new SampleQueryReturningObject(2, 3);
+			const message = { [SampleQueryReturningObject.name]: command };
+			const response = await MessageBus.Send(message, "object");
+			Set("#SampleQueryReturningObjectReturnedValue", response, true);
+		});
 
 
 		OnClick("#SendFile", async () =>
 		{
 			const fileInput = document.querySelector("#FileSelector");
 			const file = fileInput.files[0];
-			const command = new SaveFileCommand("file_from_CqrsBus_test_page.txt");
-			const message = { [SaveFileCommand.name]: command };
-			const response = await MessageBus.SendWithFile(message, file);
-			document.querySelector("#NotExistingMessageReturnedValue").innerHTML = response;
+			const command = new SampleSaveFileCommand("foo.txt");
+			const message = { [SampleSaveFileCommand.name]: command };
+			const response = await MessageBus.SendWithFile(message, file, "primitive");
+			Set("#SampleSaveFileCommandReturnedValue", response);
 		});
 
 		OnClick("#SendNotExistingMessage", async () =>
 		{
-			const notExistingMessage = { NotExistingMessage: {} };
-			const response = await MessageBus.Send(notExistingMessage);
-			document.querySelector("#NotExistingMessageReturnedValue").innerHTML = response;
+			try
+			{
+				const notExistingMessage = { NotExistingMessage: {} };
+				await MessageBus.Send(notExistingMessage, "primitive");
+			}
+			catch (e)
+			{
+				Set("#NotExistingMessageReturnedValue", e);
+			}
 		});
 
-		(async () =>
+		OnClick("#SendSampleCommandThrowingException", async () =>
 		{
-			const testQuery = new TestQuery(2);
-			const query = { [TestQuery.name]: testQuery };
-			let response = await MessageBus.Send(query);
-			document.querySelector("#TestQueryReturnedValue").innerHTML = response;
+			try
+			{
+				const command = new SampleCommand("throw");
+				const message = { [SampleCommand.name]: command };
+				await MessageBus.Send(message, "primitive");
+			}
+			catch (e)
+			{
+				Set("#SampleCommandThrowingExceptionReturnedValue", e);
+			}
+		});
 
-			const testCommand = new TestCommand("foo");
-			const command = { [TestCommand.name]: testCommand };
-			response = await MessageBus.Send(command);
-			document.querySelector("#TestCommandReturnedValue").innerHTML = response;
-		})();
 
-		setInterval(() => document.querySelector("#clock").innerHTML = new Date().toLocaleTimeString(), 1000);
+
+		setInterval(() => Set("#clock", new Date().toLocaleTimeString()), 1000);
+
+
 
 		function OnClick(selector, callback)
 		{
 			document.querySelector(selector).addEventListener('click', callback);
+		}
+
+		function Set(selector, value, json = false)
+		{
+			if (json)
+				document.querySelector(selector).innerHTML = JSON.stringify(value);
+			else
+				document.querySelector(selector).innerHTML = value;
 		}
 	</script>
 </body>
