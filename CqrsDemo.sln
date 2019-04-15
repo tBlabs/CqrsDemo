@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9D339C96
 		NugetPush.txt = NugetPush.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiddlewaresTests", "MiddlewaresTests\MiddlewaresTests.csproj", "{B5CAD435-0AC8-4BDA-B65D-53413949B059}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5CAD435-0AC8-4BDA-B65D-53413949B059}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5CAD435-0AC8-4BDA-B65D-53413949B059}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5CAD435-0AC8-4BDA-B65D-53413949B059}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5CAD435-0AC8-4BDA-B65D-53413949B059}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

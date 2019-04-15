@@ -35,3 +35,10 @@ msbuild.wrn
 NugetPush.*
 
 publish.bat
+packages/MSTest\.TestAdapter\.1\.2\.0/
+
+*.xml
+
+*.dll
+
+*.nupkg

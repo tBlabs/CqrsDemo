@@ -70,7 +70,8 @@ namespace Middlewares
 			var messageExecutionResult = await messageBus.Execute(message);
 
 			context.Response.StatusCode = (int)HttpStatusCode.OK;
-			await context.Response.WriteAsync(JsonConvert.SerializeObject(messageExecutionResult));
+			var serializedResult = JsonConvert.SerializeObject(messageExecutionResult);
+			await context.Response.WriteAsync(serializedResult);
 		}
 
 		private async Task ProcessMessageWithStream(HttpContext context, IMessageBus messageBus)
