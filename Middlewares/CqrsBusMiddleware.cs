@@ -76,16 +76,9 @@ namespace Middlewares
 		private async Task ProcessMessageWithStream(HttpContext context, IMessageBus messageBus)
 		{
 			Stream stream = context.Request.Body;
-			MemoryStream ms = new MemoryStream();
-			stream.CopyTo(ms);
-			var x = ms.Seek(0, SeekOrigin.Begin);
-
 			string message = context.Request.Headers["Message"];
 
-			var messageExecutionResult = await messageBus.Execute(message, ms);
-
-
-			ms.Dispose();
+			var messageExecutionResult = await messageBus.Execute(message, stream);
 
 			context.Response.StatusCode = (int)HttpStatusCode.OK;
 			await context.Response.WriteAsync(JsonConvert.SerializeObject(messageExecutionResult));

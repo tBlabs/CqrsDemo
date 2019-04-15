@@ -17,7 +17,6 @@ namespace WebApiHost
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
-			//app.UseDeveloperExceptionPage();
 			app.UseHttpsRedirection();
 			app.UseStaticFiles(new StaticFileOptions
 			{

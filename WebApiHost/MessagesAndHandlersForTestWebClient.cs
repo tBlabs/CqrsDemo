@@ -5,20 +5,6 @@ using Core.Interfaces;
 
 namespace WebApiHost
 {
-	public class SampleQuery : IQuery<int>
-	{
-		public int Value { get; set; }
-	}
-
-	public class SampleQueryHandler : IQueryHandler<SampleQuery, Task<int>>
-	{
-		public Task<int> Handle(SampleQuery query)
-		{
-			return Task.FromResult(query.Value * 2);
-		}
-	}
-
-
 	public class SampleCommand : ICommand
 	{
 		public string Foo { get; set; }
@@ -34,6 +20,20 @@ namespace WebApiHost
 			}
 
 			return Task.CompletedTask;
+		}
+	}
+
+
+	public class SampleQuery : IQuery<int>
+	{
+		public int Value { get; set; }
+	}
+
+	public class SampleQueryHandler : IQueryHandler<SampleQuery, Task<int>>
+	{
+		public Task<int> Handle(SampleQuery query)
+		{
+			return Task.FromResult(query.Value * 2);
 		}
 	}
 

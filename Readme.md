@@ -1,10 +1,14 @@
 ﻿# CQRS Framework
 
 Advantages of CQRS:
-- one endpoint (ex. /CqrsBus) with one (or many) method (ex POST and/or GET)
+- drasticly simplifies client-server comunication
+- only one endpoint (ex. /CqrsBus) with one (or many) method (ex POST and/or GET)
 - unified way of transfering data (serialized classes called `Messages`)
 - `Messages` are splited into `Commands` (changing system state) and `Queries` (only for quering state)
 - every `Message` has always one `MessageHandler`
+- every `Handler` has access to IoC
+- `Handlers` are easy to test
+- easy error handling
 - no MVC controllers needed
 
 ## Nuget's
@@ -53,6 +57,13 @@ result.ShouldBe(4);
 ```
 But - in case of Web API - it's better to use a dedicated middleware from `tbLabs.Cqrs.Middleware` Nuget (more in next section).
 
+## Files upload
+
+There is also one more type of `Message`:
+- `ICommandWithStream` or
+- `IQueryWithStream`
+We send it like regular `Command` or `Query`. The only difference is on the `Handler` side: every message will get an extra property - `Stream` of Stream type.
+
 ## Usage in WebAPI
 
 To use this framework with `.NET Core Web API` you may need one more usefull package: `tBlabs.Cqrs.Middleware` for handling requests.
@@ -61,6 +72,14 @@ In pipeline configuration just use that code:
 services.UseCqrsBus();
 ```
 And that's all. CQRS Framework may work with standard MVC but what's the point? :)
+
+### Middleware options
+
+Middleware may be configured with `CqrsBusMiddlewareOptions` object, like so:
+```
+app.UseCqrsBus(new CqrsBusMiddlewareOptions() { EndpointUrl = "/SomeEndpoint" });
+```
+Default value for `EndpointUrl` is `/CqrsBus` so there is no need to define one.
 
 ## Javascript client
 
