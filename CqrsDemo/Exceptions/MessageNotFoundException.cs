@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Core.Exceptions
+﻿namespace Core.Exceptions
 {
-	public class MessageNotFoundException : Exception
+	public class MessageNotFoundException : NotFoundException
 	{
-		public MessageNotFoundException(string name) : base($"Message '{name}' not found")
+		public MessageNotFoundException(string messageName) : base($"Message '{messageName}' not found")
 		{ }
 	}
 }

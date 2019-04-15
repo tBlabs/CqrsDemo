@@ -2,9 +2,9 @@
 {
 	public class CqrsBusMiddlewareOptions
 	{
-		public string UploadedFilesDir { get; set; }
+		public string EndpointUrl { get; set; }
 
 		public static CqrsBusMiddlewareOptions Default =>
-			new CqrsBusMiddlewareOptions() { UploadedFilesDir = "Default dir" };
+			new CqrsBusMiddlewareOptions() { EndpointUrl = "/CqrsBus" };
 	}
 }

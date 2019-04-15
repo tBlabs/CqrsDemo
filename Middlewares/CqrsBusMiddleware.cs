@@ -14,7 +14,6 @@ namespace Middlewares
 	public class CqrsBusMiddleware
 	{
 		private readonly RequestDelegate _nextMiddleware;
-
 		private readonly CqrsBusMiddlewareOptions _options;
 
 		public CqrsBusMiddleware(
@@ -29,7 +28,7 @@ namespace Middlewares
 		{
 			var requestPath = httpContext.Request.Path;
 
-			if (requestPath == "/CqrsBus")
+			if (requestPath == _options.EndpointUrl)
 			{
 				try
 				{
@@ -42,12 +41,7 @@ namespace Middlewares
 						await ProcessMessage(httpContext, messageBus);
 					}
 				}
-				catch (MessageNotFoundException e)
-				{
-					httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-					await httpContext.Response.WriteAsync(e.Message);
-				}
-				catch (HandlerNotFoundException e)
+				catch (NotFoundException e)
 				{
 					httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 					await httpContext.Response.WriteAsync(e.Message);

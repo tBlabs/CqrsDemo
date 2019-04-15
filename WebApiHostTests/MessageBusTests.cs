@@ -2,21 +2,12 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Interfaces;
-using Core.Services;
-using Core.Test;
-using Messages.Commands;
-using Messages.Dto;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Moq;
 using Newtonsoft.Json;
 using Shouldly;
-using WebApiHost;
 using WebApiHostTests.Helpers;
 using Xunit;
 
@@ -29,31 +20,18 @@ namespace WebApiHostTests
 			public int Value { get; set; }
 		}
 
-		public class Query : IQuery<int>
-		{
-			public int Value { get; set; }
-		}
-
-		public class CommandWithStream : ICommandWithStream
-		{
-			public Stream Stream { get; set; }
-			public string Foo { get; set; }
-		}
-
-		public class CommandWithStreamHandler : ICommandHandler<CommandWithStream>
-		{
-			public Task Handle(CommandWithStream command)
-			{
-				return Task.CompletedTask;
-			}
-		}
-
 		public class CommandHandler : ICommandHandler<Command>
 		{
 			public Task Handle(Command command)
 			{
 				return Task.CompletedTask;
 			}
+		}
+
+
+		public class Query : IQuery<int>
+		{
+			public int Value { get; set; }
 		}
 
 		public class QueryHandler : IQueryHandler<Query, Task<int>>
@@ -69,7 +47,27 @@ namespace WebApiHostTests
 			}
 		}
 
+
+		public class CommandWithStream : ICommandWithStream
+		{
+			public Stream Stream { get; set; }
+			public string Foo { get; set; }
+		}
+
+		public class CommandWithStreamHandler : ICommandHandler<CommandWithStream>
+		{
+			public Task Handle(CommandWithStream command)
+			{
+				return Task.CompletedTask;
+			}
+		}
+
+
 		public class NotRegisteredMessage : IMessage
+		{ }
+
+
+		public class MessageWithNoHandler : IMessage
 		{ }
 
 		private readonly HttpClient client;
@@ -94,7 +92,7 @@ namespace WebApiHostTests
 
 		#region Helpers
 
-		private async Task<(HttpStatusCode, T)> PostMessage<T>(IMessage message)
+		private async Task<(HttpStatusCode, TResponse)> PostMessage<TResponse>(IMessage message)
 		{
 			string messageAsJson = message.ToJson();
 			var content = new StringContent(messageAsJson, Encoding.UTF8, "application/json");
@@ -105,17 +103,17 @@ namespace WebApiHostTests
 
 			if (response.IsSuccessStatusCode)
 			{
-				var responseObject = JsonConvert.DeserializeObject<T>(responseContent);
+				var responseObject = JsonConvert.DeserializeObject<TResponse>(responseContent);
 
 				return (response.StatusCode, responseObject);
 			}
 			else
 			{
-				return (response.StatusCode, (T)(object)responseContent);
+				return (response.StatusCode, (TResponse)(object)responseContent);
 			}
 		}
 
-		private async Task<(HttpStatusCode, T)> PostMessage<T>(IMessage message, Stream stream)
+		private async Task<(HttpStatusCode, TResponse)> PostMessage<TResponse>(IMessage message, Stream stream)
 		{
 			string messageAsJson = message.ToJson();
 			var content = new StreamContent(stream);
@@ -126,13 +124,13 @@ namespace WebApiHostTests
 
 			if (response.IsSuccessStatusCode)
 			{
-				var responseObject = JsonConvert.DeserializeObject<T>(responseContent);
+				var responseObject = JsonConvert.DeserializeObject<TResponse>(responseContent);
 
 				return (response.StatusCode, responseObject);
 			}
 			else
 			{
-				return (response.StatusCode, (T)(object)responseContent);
+				return (response.StatusCode, (TResponse)(object)responseContent);
 			}
 		}
 

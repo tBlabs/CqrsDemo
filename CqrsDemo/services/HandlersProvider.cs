@@ -5,41 +5,29 @@ using Core.Interfaces;
 
 namespace Core.Services
 {
-    public class HandlersProvider
-    {
-        public List<Type> Handlers { get; } = new List<Type>();
+	public class HandlersProvider
+	{
+		public List<Type> Handlers { get; } = new List<Type>();
 
-        public HandlersProvider(ITypesProvider typesProvider)
-        {
-            foreach (var t in typesProvider.Types
-	            .Where(x=>x.IsClass && !x.IsAbstract).Where(x=>x.IsPublic || x.IsNestedPublic)
-            )
-            {
-    //            if (!t.IsClass) continue;
-    //            if (t.IsAbstract) continue;
+		public HandlersProvider(ITypesProvider typesProvider)
+		{
+			foreach (var t in typesProvider.Types
+				.Where(x => x.IsClass && !x.IsAbstract)
+				.Where(x => x.IsPublic || x.IsNestedPublic))
+			{
+				var interfaces = t.GetInterfaces();
 
-				//if (!t.IsNested)
-    //            {
-	   //             if (!t.IsPublic) continue;
-    //            }
-    //            else
-    //            {
-	   //             if (!t.IsNestedPublic) continue;
-    //            }
+				foreach (var i in interfaces)
+				{
+					if (!i.IsGenericType) continue;
 
-                var interfaces = t.GetInterfaces();
+					if ((i.GetGenericTypeDefinition() != typeof(ICommandHandler<>))
+						&& (i.GetGenericTypeDefinition() != typeof(IQueryHandler<,>))) continue;
 
-                foreach (var i in interfaces)
-                {
-                    if (!i.IsGenericType) continue;
-
-                    if ((i.GetGenericTypeDefinition() != typeof(ICommandHandler<>))
-                        && (i.GetGenericTypeDefinition() != typeof(IQueryHandler<,>))) continue;
-
-                    Handlers.Add(t);
-                }
-            }
-        }
-    }
+					Handlers.Add(t);
+				}
+			}
+		}
+	}
 }
 

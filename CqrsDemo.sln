@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "CqrsDemo\Core.cspro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Test", "CqrsDemo.Test\Core.Test.csproj", "{79C16BB1-9D73-49A8-90F4-05EF950F2AB6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messages", "Model\Messages.csproj", "{CEB47CAD-03FF-4C0D-AFD9-29B524290366}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Handlers", "Handlers\Handlers.csproj", "{A314F5E3-2FD3-43B0-B954-E091E43C3B0F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleAppHost", "Host\ConsoleAppHost.csproj", "{B935AA28-74CE-4672-B235-0027814E7E8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiHost", "WebApiHost\WebApiHost.csproj", "{AFDFB11D-E2CF-4D66-9CB0-70292CA98E68}"
@@ -19,11 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiHostTests", "WebApiHo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClient", "WebClient\WebClient.csproj", "{2574F603-4B6C-4A30-BFDD-E3BC09EEDFDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage", "Storage\Storage.csproj", "{BB10690E-66C6-44E9-B260-A0EA6FF39CA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Storage", "Storage\Storage.csproj", "{BB10690E-66C6-44E9-B260-A0EA6FF39CA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage.Tests", "Storage.Tests\Storage.Tests.csproj", "{C2645846-3158-46EE-B0AD-81E2777A97A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Storage.Tests", "Storage.Tests\Storage.Tests.csproj", "{C2645846-3158-46EE-B0AD-81E2777A97A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Middlewares", "Middlewares\Middlewares.csproj", "{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Middlewares", "Middlewares\Middlewares.csproj", "{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9D339C96-C9D7-461C-A93F-352CC64F7C8D}"
 	ProjectSection(SolutionItems) = preProject
@@ -44,14 +40,6 @@ Global
 		{79C16BB1-9D73-49A8-90F4-05EF950F2AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79C16BB1-9D73-49A8-90F4-05EF950F2AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79C16BB1-9D73-49A8-90F4-05EF950F2AB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CEB47CAD-03FF-4C0D-AFD9-29B524290366}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CEB47CAD-03FF-4C0D-AFD9-29B524290366}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CEB47CAD-03FF-4C0D-AFD9-29B524290366}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CEB47CAD-03FF-4C0D-AFD9-29B524290366}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A314F5E3-2FD3-43B0-B954-E091E43C3B0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A314F5E3-2FD3-43B0-B954-E091E43C3B0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A314F5E3-2FD3-43B0-B954-E091E43C3B0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A314F5E3-2FD3-43B0-B954-E091E43C3B0F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B935AA28-74CE-4672-B235-0027814E7E8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B935AA28-74CE-4672-B235-0027814E7E8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B935AA28-74CE-4672-B235-0027814E7E8A}.Release|Any CPU.ActiveCfg = Release|Any CPU

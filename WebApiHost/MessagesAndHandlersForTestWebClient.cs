@@ -1,54 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Core.Interfaces;
 
 namespace WebApiHost
 {
-	public class TestQuery : IQuery<int>
+	public class SampleQuery : IQuery<int>
 	{
 		public int Value { get; set; }
 	}
 
-	public class TestQueryHandler : IQueryHandler<TestQuery, Task<int>>
+	public class SampleQueryHandler : IQueryHandler<SampleQuery, Task<int>>
 	{
-		public Task<int> Handle(TestQuery query)
+		public Task<int> Handle(SampleQuery query)
 		{
 			return Task.FromResult(query.Value * 2);
 		}
 	}
 
-	public class TestCommand : ICommand
+
+	public class SampleCommand : ICommand
 	{
 		public string Foo { get; set; }
 	}
 
-	public class TestCommandHandler : ICommandHandler<TestCommand>
+	public class SampleCommandHandler : ICommandHandler<SampleCommand>
 	{
-		public Task Handle(TestCommand command)
+		public Task Handle(SampleCommand command)
 		{
 			return Task.CompletedTask;
 		}
 	}
 
-	public class SaveFileCommand : ICommandWithStream
+
+	public class SampleSaveFileCommand : ICommandWithStream
 	{
 		public Stream Stream { get; set; }
 		public string SaveAs { get; set; }
 	}
 
-	public class SaveFileCommandHandler : ICommandHandler<SaveFileCommand>
+	public class SampleSaveFileCommandHandler : ICommandHandler<SampleSaveFileCommand>
 	{
-		public Task Handle(SaveFileCommand command)
+		public async Task Handle(SampleSaveFileCommand command)
 		{
 			using (var fileStream = File.Create(command.SaveAs))
 			{
-				command.Stream.CopyTo(fileStream);
+				await command.Stream.CopyToAsync(fileStream);
 			}
-
-			return Task.CompletedTask;
 		}
 	}
 }

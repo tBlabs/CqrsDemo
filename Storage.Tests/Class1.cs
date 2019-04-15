@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Shouldly;
-using Xunit;
+﻿using Xunit;
 
 namespace Storage.Tests
 {

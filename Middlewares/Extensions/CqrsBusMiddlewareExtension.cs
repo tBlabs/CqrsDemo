@@ -6,7 +6,7 @@ namespace Middlewares.Extensions
 	{
 		public static IApplicationBuilder UseCqrsBus(this IApplicationBuilder builder, CqrsBusMiddlewareOptions options = null)
 		{
-			return builder.UseMiddleware<CqrsBusMiddleware>(options);
+			return builder.UseMiddleware<CqrsBusMiddleware>(options ?? CqrsBusMiddlewareOptions.Default);
 		}
 	}
 }
