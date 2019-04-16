@@ -1,13 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using Core.Exceptions;
 using Core.Extensions;
 using Core.Services;
 using Microsoft.AspNetCore.Http;
 using Middlewares.Extensions;
-using Newtonsoft.Json;
 
 namespace Middlewares
 {
@@ -43,13 +41,11 @@ namespace Middlewares
 				}
 				catch (NotFoundException e)
 				{
-					httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-					await httpContext.Response.WriteAsync(e.Message);
+					await httpContext.Response.NotFound(e.Message);
 				}
 				catch (Exception e)
 				{
-					httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-					await httpContext.Response.WriteAsync(e.Message);
+					await httpContext.Response.InternalServerError(e.Message);
 				}
 			}
 			else
@@ -69,9 +65,7 @@ namespace Middlewares
 
 			var messageExecutionResult = await messageBus.Execute(message);
 
-			context.Response.StatusCode = (int)HttpStatusCode.OK;
-			var serializedResult = JsonConvert.SerializeObject(messageExecutionResult);
-			await context.Response.WriteAsync(serializedResult);
+			await context.Response.Json(messageExecutionResult);
 		}
 
 		private async Task ProcessMessageWithStream(HttpContext context, IMessageBus messageBus)
@@ -81,8 +75,7 @@ namespace Middlewares
 
 			var messageExecutionResult = await messageBus.Execute(message, stream);
 
-			context.Response.StatusCode = (int)HttpStatusCode.OK;
-			await context.Response.WriteAsync(JsonConvert.SerializeObject(messageExecutionResult));
+			await context.Response.Json(messageExecutionResult);
 		}
 	}
 }
