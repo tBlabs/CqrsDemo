@@ -16,6 +16,14 @@ namespace MiddlewaresTests
 	public class CqrsBusMiddlewareTests
 	{
 		[Fact]
+		public void New_options_should_inherit_from_default()
+		{
+			var options = new CqrsBusMiddlewareOptions() {EndpointUrl = "abc"};
+			options.EndpointUrl.ShouldBe("abc");
+			options.MessageHeader.ShouldBe("Message");
+		}
+
+		[Fact]
 		public async void MessageBus_should_be_called_for_regular_message()
 		{
 			// Given
@@ -51,7 +59,7 @@ namespace MiddlewaresTests
 			var httpContext = new DefaultHttpContext();
 
 			httpContext.Request.Path = CqrsBusMiddlewareOptions.Default.EndpointUrl;
-			httpContext.Request.Headers.Add("Message", "some_message");
+			httpContext.Request.Headers.Add(CqrsBusMiddlewareOptions.Default.MessageHeader, "some_message");
 			httpContext.Request.Body = new MemoryStream();
 
 			// When 

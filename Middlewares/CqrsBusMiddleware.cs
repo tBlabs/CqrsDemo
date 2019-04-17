@@ -56,7 +56,7 @@ namespace Middlewares
 
 		private bool IsMessageWithStream(HttpContext context)
 		{
-			return context.Request.Headers["Message"].ToString().IsNotEmpty();
+			return context.Request.Headers[CqrsBusMiddlewareOptions.Default.MessageHeader].ToString().IsNotEmpty();
 		}
 
 		private async Task ProcessMessage(HttpContext context, IMessageBus messageBus)
@@ -71,7 +71,7 @@ namespace Middlewares
 		private async Task ProcessMessageWithStream(HttpContext context, IMessageBus messageBus)
 		{
 			Stream stream = context.Request.Body;
-			string message = context.Request.Headers["Message"];
+			string message = context.Request.Headers[CqrsBusMiddlewareOptions.Default.MessageHeader];
 
 			var messageExecutionResult = await messageBus.Execute(message, stream);
 
