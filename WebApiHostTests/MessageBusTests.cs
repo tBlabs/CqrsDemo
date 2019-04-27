@@ -88,7 +88,7 @@ namespace WebApiHostTests
 
 		#region Helpers
 
-		private async Task<(HttpStatusCode, TResponse)> PostMessage<TResponse>(IMessage message)
+		private async Task<(HttpStatusCode, TResponse)> SendMessage<TResponse>(IMessage message)
 		{
 			string messageAsJson = message.ToJson();
 			var content = new StringContent(messageAsJson, Encoding.UTF8, "application/json");
@@ -108,6 +108,14 @@ namespace WebApiHostTests
 				return (response.StatusCode, (TResponse)(object)responseContent);
 			}
 		}
+
+		private async Task<HttpStatusCode> SendCommand(ICommand command)
+		{
+			var (http, response) = await SendMessage<object>(command);
+			response.ShouldBeNull();
+			return http;
+		}
+
 
 		private async Task<(HttpStatusCode, TResponse)> PostMessage<TResponse>(IMessage message, Stream stream)
 		{
@@ -138,10 +146,9 @@ namespace WebApiHostTests
 		{
 			var message = new Command { Value = 3 };
 
-			var (httpStatus, response) = await PostMessage<object>(message);
+			var httpStatus = await SendCommand(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.OK);
-			response.ShouldBeNull();
 		}
 
 		[Fact]
@@ -149,7 +156,7 @@ namespace WebApiHostTests
 		{
 			var message = new Query { Value = 2 };
 
-			var (httpStatus, response) = await PostMessage<int>(message);
+			var (httpStatus, response) = await SendMessage<int>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.OK);
 			response.ShouldBe(4);
@@ -172,7 +179,7 @@ namespace WebApiHostTests
 		{
 			var message = new NotRegisteredMessage();
 
-			var (httpStatus, response) = await PostMessage<string>(message);
+			var (httpStatus, response) = await SendMessage<string>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.NotFound);
 			response.ShouldContain("not found");
@@ -182,8 +189,8 @@ namespace WebApiHostTests
 		public async Task Handler_exception_should_be_catch()
 		{
 			var message = new Query { Value = 0 }; // Value==0 will make handler to throw exception
-
-			var (httpStatus, response) = await PostMessage<string>(message);
+			
+			var (httpStatus, response) = await SendMessage<string>(message);
 
 			httpStatus.ShouldBe(HttpStatusCode.InternalServerError);
 			response.ShouldBe("SomeExceptionMessage");

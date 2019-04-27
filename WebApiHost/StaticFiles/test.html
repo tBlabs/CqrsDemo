@@ -26,11 +26,19 @@
 	</style>
 </head>
 <body>
-	<p class="small">
-		This is a bunch of examples of using MessageBus.
-		Consider this as a start point for your implementation.
-		This one isn't pretty.
-	</p>
+<p class="small" style="background: blue; color: white; padding: 18px; border-radius: 5px">
+	This is a bunch of examples of using MessageBus.
+	Consider this as a start point for your implementation.
+	This one isn't especially pretty.
+</p>
+<select id="httpMethod">
+	<option value="POST" selected="selected">POST</option>
+	<option value="GET">GET</option>
+	<option value="PUT">PUT</option>
+	<option value="PATCH">PATCH</option>
+	<option value="DELETE">DELETE</option>
+</select>
+<input type="text" id="cqrsBusAddr" value="http://localhost:1234/CqrsBus" style="width: 300px"/>
 	<table>
 		<tr>
 			<th>Message (Command or Query)</th>
@@ -121,10 +129,10 @@
 			{
 				try
 				{
-					console.log("Sending: ", message, "...");
-					const response = await fetch('http://localhost:53151/CqrsBus',
+					console.log("Sending (" + GetMethod() + " " + GetEndpoint() + "): ", message, "...");
+					const response = await fetch(GetEndpoint(),
 						{
-							method: 'POST',
+							method: GetMethod(),
 							headers: { "Content-Type": "application/json" },
 							body: JSON.stringify(message)
 						});
@@ -139,10 +147,10 @@
 						data = await response.json();
 					}
 
-					console.log("Response: ", data);
-
 					if (response.ok)
 					{
+						console.log("Response: ", data);
+
 						return data;
 					}
 					else
@@ -161,10 +169,10 @@
 			{
 				try
 				{
-					console.log("Sending", message, "...");
-					const response = await fetch('http://localhost:53151/CqrsBus',
+					console.log("Sending (" + GetMethod() + " " + GetEndpoint() + "): ", message, "...");
+					const response = await fetch(GetEndpoint(),
 						{
-							method: 'POST',
+							method: GetMethod(),
 							body: file,
 							headers: { "Message": JSON.stringify(message) }
 						});
@@ -246,6 +254,15 @@
 		setInterval(() => Set("#clock", new Date().toLocaleTimeString()), 1000);
 
 
+		document.querySelector("#cqrsBusAddr").value = window.location.origin + "/CqrsBus";
+
+		function GetEndpoint() {
+			return document.querySelector("#cqrsBusAddr").value;
+		}
+
+		function GetMethod() {
+			return document.querySelector("#httpMethod").value;
+		}
 
 		function OnClick(selector, callback)
 		{

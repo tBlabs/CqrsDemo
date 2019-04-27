@@ -27,7 +27,7 @@ Anywhere in the code define a `Message` (`Command` or `Query`):
 
 	public class SampleQuery : IQuery<int>
 	{
-		public int Value { get; set; }
+		public int Foo { get; set; }
 	}
 
 ```
@@ -45,13 +45,13 @@ You also need to define a `Handler` for your `Message`, like so:
 	{
 		public Task<int> Handle(SampleQuery query)
 		{
-			return Task.FromResult(query.Value * 2);
+			return Task.FromResult(query.Foo * 2);
 		}
 	}
 ```
 To call `Handler` with `Message` use `MessageBus.Execute()`, like here:
 ```
-var message = "{ 'TestQuery': { "Value": 2 } }";
+var message = "{ 'TestQuery': { 'Foo': 2 } }";
 var result = await _messageBus.Execute(message); 
 result.ShouldBe(4);
 ```
@@ -62,16 +62,17 @@ But - in case of Web API - it's better to use a dedicated middleware from `tbLab
 There is also one more type of `Message`:
 - `ICommandWithStream` or
 - `IQueryWithStream`
-We send it like regular `Command` or `Query`. The only difference is on the `Handler` side: every message will get an extra property - `Stream` of Stream type.
+
+We send it like regular `Command` or `Query`. The only difference is on the `Handler` side: every message will get an extra property - `Stream` of Stream type which is a file itself.
 
 ## Usage in WebAPI
 
-To use this framework with `.NET Core Web API` you may need one more usefull package: `tBlabs.Cqrs.Middleware` for handling requests.
+To use this framework with `.NET Core Web API` you may need one more usefull package: `tBlabs.Cqrs.Middleware` for handling requests.  
 In pipeline configuration just use that code:
 ```
 services.UseCqrsBus();
 ```
-And that's all. CQRS Framework may work with standard MVC but what's the point? :)
+And that's all. CQRS Framework may work with standard MVC (but what's the point? :)
 
 ### Middleware options
 
@@ -79,7 +80,7 @@ Middleware may be configured with `CqrsBusMiddlewareOptions` object, like so:
 ```
 app.UseCqrsBus(new CqrsBusMiddlewareOptions() { EndpointUrl = "/SomeEndpoint" });
 ```
-Default value for `EndpointUrl` is `/CqrsBus` so there is no need to define one.
+Default value for `EndpointUrl` is `/CqrsBus` so there is no need to define one. Every HTTP method is accepted.
 
 ## Javascript client
 
