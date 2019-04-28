@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Middlewares\Middlewares.csproj" />
+    <ProjectReference Include="..\Middlewares\tBlabs.Cqrs.Middlewares.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,14 +4,14 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Shouldly;
-using WebApiHostTests.Helpers;
+using tBlabs.Cqrs.Core.Interfaces;
+using WebApiHost.Tests.Helpers;
 using Xunit;
 
-namespace WebApiHostTests
+namespace WebApiHost.Tests
 {
 	public class WebApiHostIntegrationTests : IClassFixture<WebApplicationFactory<WebApiHost.Startup>>
 	{

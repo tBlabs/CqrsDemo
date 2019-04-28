@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Core.Interfaces
+namespace tBlabs.Cqrs.Core.Interfaces
 {
     public interface ICommandHandler<T> where T : ICommand
     {

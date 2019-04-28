@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
+using tBlabs.Cqrs.Core.Extensions;
 
 namespace ConsoleAppHost
 {

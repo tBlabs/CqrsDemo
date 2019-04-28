@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace Middlewares.Extensions
+namespace tBlabs.Cqrs.Middlewares.Extensions
 {
 	public static class CqrsBusMiddlewareExtension
 	{

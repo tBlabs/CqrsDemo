@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
-using Core.Exceptions;
-using Core.Interfaces;
-using Core.Services;
 using FluentAssertions;
 using Moq;
 using Shouldly;
+using tBlabs.Cqrs.Core.Exceptions;
+using tBlabs.Cqrs.Core.Interfaces;
+using tBlabs.Cqrs.Core.Services;
 using Xunit;
 
-namespace Core.Test
+namespace tBlabs.Cqrs.Core.Tests
 {
 	public class MessageProviderTest
 	{

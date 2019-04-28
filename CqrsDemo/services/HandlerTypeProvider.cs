@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core.Exceptions;
-using Core.Interfaces;
+using tBlabs.Cqrs.Core.Exceptions;
+using tBlabs.Cqrs.Core.Interfaces;
 
-namespace Core.Services
+namespace tBlabs.Cqrs.Core.Services
 {
     public class HandlerTypeProvider : IHandlerTypeProvider
     {

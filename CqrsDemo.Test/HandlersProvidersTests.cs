@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using Core.Interfaces;
-using Core.Services;
 using FluentAssertions;
 using Moq;
+using tBlabs.Cqrs.Core.Interfaces;
+using tBlabs.Cqrs.Core.Services;
 using Xunit;
 
-namespace Core.Test
+namespace tBlabs.Cqrs.Core.Tests
 {
     public class HandlersProvidersTests
     {

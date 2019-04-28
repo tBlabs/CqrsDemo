@@ -1,4 +1,4 @@
-﻿namespace Core.Extensions
+﻿namespace tBlabs.Cqrs.Core.Extensions
 {
     public static class StringExtension
     {

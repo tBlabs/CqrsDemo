@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Core.Interfaces
+namespace tBlabs.Cqrs.Core.Interfaces
 {
 	public interface IMessageWithStream : IMessage
 	{

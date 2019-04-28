@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core.Services;
 using Microsoft.Extensions.DependencyInjection;
+using tBlabs.Cqrs.Core.Services;
 
-namespace Core.Extensions
+namespace tBlabs.Cqrs.Core.Extensions
 {
     public static class ServiceCollectionExtension
     {

@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CqrsDemo\Core.csproj" />
-    <ProjectReference Include="..\Middlewares\Middlewares.csproj" />
+    <ProjectReference Include="..\CqrsDemo\tBlabs.Cqrs.Core.csproj" />
+    <ProjectReference Include="..\Middlewares\tBlabs.Cqrs.Middlewares.csproj" />
   </ItemGroup>
 
   <ItemGroup>

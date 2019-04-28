@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core.Exceptions
+namespace tBlabs.Cqrs.Core.Exceptions
 {
 	public class NoMessageArgsException : Exception
 	{

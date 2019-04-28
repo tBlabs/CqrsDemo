@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Core.Services
+namespace tBlabs.Cqrs.Core.Services
 {
 	public class SolutionTypesProvider : ITypesProvider
 	{

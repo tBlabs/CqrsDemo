@@ -1,10 +1,10 @@
 ﻿using System.IO;
-using Core.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Middlewares.Extensions;
+using tBlabs.Cqrs.Core.Extensions;
+using tBlabs.Cqrs.Middlewares.Extensions;
 
 namespace WebApiHost
 {

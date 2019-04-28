@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CqrsDemo\Core.csproj" />
+    <ProjectReference Include="..\CqrsDemo\tBlabs.Cqrs.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

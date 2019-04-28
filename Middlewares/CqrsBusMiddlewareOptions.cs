@@ -1,4 +1,4 @@
-﻿namespace Middlewares
+﻿namespace tBlabs.Cqrs.Middlewares
 {
 	public class CqrsBusMiddlewareOptions
 	{

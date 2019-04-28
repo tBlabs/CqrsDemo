@@ -1,9 +1,9 @@
-﻿using Core.Interfaces;
-using Shouldly;
-using WebApiHostTests.Helpers;
+﻿using Shouldly;
+using tBlabs.Cqrs.Core.Interfaces;
+using WebApiHost.Tests.Helpers;
 using Xunit;
 
-namespace WebApiHostTests
+namespace WebApiHost.Tests
 {
     public class MessageExtensionsTests
     {

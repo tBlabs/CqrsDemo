@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "CqrsDemo\Core.csproj", "{F3CC1E69-2BE2-412D-9454-43EDD48984D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tBlabs.Cqrs.Core", "CqrsDemo\tBlabs.Cqrs.Core.csproj", "{F3CC1E69-2BE2-412D-9454-43EDD48984D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Test", "CqrsDemo.Test\Core.Test.csproj", "{79C16BB1-9D73-49A8-90F4-05EF950F2AB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tBlabs.Cqrs.Core.Tests", "CqrsDemo.Test\tBlabs.Cqrs.Core.Tests.csproj", "{79C16BB1-9D73-49A8-90F4-05EF950F2AB6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleAppHost", "Host\ConsoleAppHost.csproj", "{B935AA28-74CE-4672-B235-0027814E7E8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiHost", "WebApiHost\WebApiHost.csproj", "{AFDFB11D-E2CF-4D66-9CB0-70292CA98E68}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiHostTests", "WebApiHostTests\WebApiHostTests.csproj", "{97701C4A-0E51-4AEF-A0CD-5440AAE2B5C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiHost.Tests", "WebApiHostTests\WebApiHost.Tests.csproj", "{97701C4A-0E51-4AEF-A0CD-5440AAE2B5C5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClient", "WebClient\WebClient.csproj", "{2574F603-4B6C-4A30-BFDD-E3BC09EEDFDF}"
 EndProject
@@ -19,14 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Storage", "Storage\Storage.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Storage.Tests", "Storage.Tests\Storage.Tests.csproj", "{C2645846-3158-46EE-B0AD-81E2777A97A7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Middlewares", "Middlewares\Middlewares.csproj", "{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tBlabs.Cqrs.Middlewares", "Middlewares\tBlabs.Cqrs.Middlewares.csproj", "{3A620E1C-F36E-4B65-B2F4-1A4ACC6F6DC9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9D339C96-C9D7-461C-A93F-352CC64F7C8D}"
 	ProjectSection(SolutionItems) = preProject
 		NugetPush.txt = NugetPush.txt
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiddlewaresTests", "MiddlewaresTests\MiddlewaresTests.csproj", "{B5CAD435-0AC8-4BDA-B65D-53413949B059}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tBlabs.Cqrs.Middlewares.Tests", "MiddlewaresTests\tBlabs.Cqrs.Middlewares.Tests.csproj", "{B5CAD435-0AC8-4BDA-B65D-53413949B059}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D37B1ECB-E47D-4103-83B3-CF4A46CB7589}"
 	ProjectSection(SolutionItems) = preProject

@@ -23,14 +23,21 @@
 		.small {
 			font-size: 12px;
 		}
+		.info {
+			background: blue; color: white; padding: 18px; border-radius: 5px;
+		}
+		input[type=text] {
+			width: 250px;
+		}
 	</style>
 </head>
 <body>
-<p class="small" style="background: blue; color: white; padding: 18px; border-radius: 5px">
+<p class="small info">
 	This is a bunch of examples of using MessageBus.
-	Consider this as a start point for your implementation.
+	Consider this as a entry point for your implementation.
 	This one isn't especially pretty.
 </p>
+Every Message will be send via 
 <select id="httpMethod">
 	<option value="POST" selected="selected">POST</option>
 	<option value="GET">GET</option>
@@ -38,7 +45,8 @@
 	<option value="PATCH">PATCH</option>
 	<option value="DELETE">DELETE</option>
 </select>
-<input type="text" id="cqrsBusAddr" value="http://localhost:1234/CqrsBus" style="width: 300px"/>
+to 
+<input type="text" id="cqrsBusAddr" value="http://localhost:1234/CqrsBus"/>
 	<table>
 		<tr>
 			<th>Message (Command or Query)</th>

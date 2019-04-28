@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core.Services
+namespace tBlabs.Cqrs.Core.Services
 {
     public interface IMessageTypeProvider
     {

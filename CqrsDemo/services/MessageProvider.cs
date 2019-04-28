@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Core.Exceptions;
-using Core.Interfaces;
 using Newtonsoft.Json;
+using tBlabs.Cqrs.Core.Exceptions;
+using tBlabs.Cqrs.Core.Interfaces;
 
-namespace Core.Services
+namespace tBlabs.Cqrs.Core.Services
 {
 	public class MessageProvider : IMessageProvider
 	{

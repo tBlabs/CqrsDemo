@@ -2,16 +2,15 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using Core.Exceptions;
-using Core.Services;
 using Microsoft.AspNetCore.Http;
-using Middlewares;
-using Middlewares.Extensions;
 using Moq;
 using Shouldly;
+using tBlabs.Cqrs.Core.Exceptions;
+using tBlabs.Cqrs.Core.Services;
+using tBlabs.Cqrs.Middlewares.Extensions;
 using Xunit;
 
-namespace MiddlewaresTests
+namespace tBlabs.Cqrs.Middlewares.Tests
 {
 	public class CqrsBusMiddlewareTests
 	{

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Core.Exceptions;
-using Core.Extensions;
-using Core.Services;
 using Microsoft.AspNetCore.Http;
-using Middlewares.Extensions;
+using tBlabs.Cqrs.Core.Exceptions;
+using tBlabs.Cqrs.Core.Extensions;
+using tBlabs.Cqrs.Core.Services;
+using tBlabs.Cqrs.Middlewares.Extensions;
 
-namespace Middlewares
+namespace tBlabs.Cqrs.Middlewares
 {
 	public class CqrsBusMiddleware
 	{

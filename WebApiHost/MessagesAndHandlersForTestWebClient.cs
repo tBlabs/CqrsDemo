@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Core.Interfaces;
+using tBlabs.Cqrs.Core.Interfaces;
 
 namespace WebApiHost
 {

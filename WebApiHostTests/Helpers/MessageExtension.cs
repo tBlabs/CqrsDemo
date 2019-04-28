@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Core.Interfaces;
 using Newtonsoft.Json;
+using tBlabs.Cqrs.Core.Interfaces;
 
-namespace WebApiHostTests.Helpers
+namespace WebApiHost.Tests.Helpers
 {
 	public static class MessageExtension
 	{

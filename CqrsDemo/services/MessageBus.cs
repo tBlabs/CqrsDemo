@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Core.Interfaces;
+using tBlabs.Cqrs.Core.Interfaces;
 
-namespace Core.Services
+namespace tBlabs.Cqrs.Core.Services
 {
     public class MessageBus : IMessageBus
     {

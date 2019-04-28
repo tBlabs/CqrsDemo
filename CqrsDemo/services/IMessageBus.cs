@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace Core.Services
+namespace tBlabs.Cqrs.Core.Services
 {
     public interface IMessageBus
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Core.Services;
+using tBlabs.Cqrs.Core.Services;
 
 namespace ConsoleAppHost
 {
