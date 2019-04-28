@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace tBlabs.Cqrs.Middlewares.Extensions
+namespace tBlabs.Cqrs.Middleware.Extensions
 {
 	public static class StreamExtension
 	{

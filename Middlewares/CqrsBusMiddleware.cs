@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Http;
 using tBlabs.Cqrs.Core.Exceptions;
 using tBlabs.Cqrs.Core.Extensions;
 using tBlabs.Cqrs.Core.Services;
-using tBlabs.Cqrs.Middlewares.Extensions;
+using tBlabs.Cqrs.Middleware.Extensions;
 
-namespace tBlabs.Cqrs.Middlewares
+namespace tBlabs.Cqrs.Middleware
 {
 	public class CqrsBusMiddleware
 	{

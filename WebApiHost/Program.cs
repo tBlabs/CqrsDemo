@@ -27,7 +27,6 @@ namespace WebApiHost
 			{
 				try
 				{
-					//if (!library.Name.EndsWith("Tests"))
 					Assembly.Load(new AssemblyName(library.Name));
 				}
 				catch (Exception)

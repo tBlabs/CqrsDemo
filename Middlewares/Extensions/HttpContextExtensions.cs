@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace tBlabs.Cqrs.Middlewares.Extensions
+namespace tBlabs.Cqrs.Middleware.Extensions
 {
 	public static class HttpContextExtensions
 	{

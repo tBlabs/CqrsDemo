@@ -7,10 +7,10 @@ using Moq;
 using Shouldly;
 using tBlabs.Cqrs.Core.Exceptions;
 using tBlabs.Cqrs.Core.Services;
-using tBlabs.Cqrs.Middlewares.Extensions;
+using tBlabs.Cqrs.Middleware.Extensions;
 using Xunit;
 
-namespace tBlabs.Cqrs.Middlewares.Tests
+namespace tBlabs.Cqrs.Middleware.Tests
 {
 	public class CqrsBusMiddlewareTests
 	{

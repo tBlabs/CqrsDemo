@@ -11,6 +11,7 @@
     <Company>tBlabs</Company>
     <Product>Cqrs</Product>
     <Description>Middleware for Web API CQRS Framework</Description>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
