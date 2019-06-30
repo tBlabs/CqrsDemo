@@ -17,11 +17,12 @@ namespace ConsoleAppHost
         {
             try
             {
-                await _messageBus.Execute("{ 'name': 'SampleQuery', 'args': \"{ 'Foo': 'Bar' }\" }");
+                var res = await _messageBus.Execute("{ 'FeatureXSampleQuery': { 'Value': 5 } }");
+                Console.WriteLine(res);
 
-                await _messageBus.Execute("{ 'name': 'SampleCommand', 'args': \"{ 'Foo': 'Bar' }\" }");
+                await _messageBus.Execute("{ 'FeatureXSampleCommand': { 'Value': 7 } }");
 
-                await _messageBus.Execute("{ 'name': 'NotExistingMessage', 'args': \"{ 'Foo': 'Bar' }\" }");
+                await _messageBus.Execute("{ 'NotExistingMessage': { 'Foo': 'Bar' } }");
             }
             catch (Exception ex)
             {

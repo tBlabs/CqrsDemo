@@ -1,10 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Moq;
 using tBlabs.Cqrs.Core.Interfaces;
 using tBlabs.Cqrs.Core.Services;
-using Xunit;
 
 namespace tBlabs.Cqrs.Core.Tests
 {
@@ -42,23 +40,23 @@ namespace tBlabs.Cqrs.Core.Tests
 			_typesProvider = typesProviderMock.Object;
 	    }
 
-		[Fact]
-        public void HandlersProvider_should_collect_all_handlers()
-        {        
-            var sut = new HandlersProvider(_typesProvider);
+		//[Fact]
+  //      public void HandlersProvider_should_collect_all_handlers()
+  //      {        
+  //          var sut = new HandlersProvider(_typesProvider);
 
-            sut.Handlers.Count.Should().Be(2);
-            sut.Handlers.Should().Contain(typeof(HPTestCommandHandler));
-            sut.Handlers.Should().Contain(typeof(HPTestQueryHandler));
-        }
+  //          sut.Handlers.Count.Should().Be(2);
+  //          sut.Handlers.Should().Contain(typeof(HPTestCommandHandler));
+  //          sut.Handlers.Should().Contain(typeof(HPTestQueryHandler));
+  //      }
 
-        [Fact]
-        public void HandlerTypeProvider_should_provide_handler_by_message_type()
-        {
-            var sut = new HandlerTypeProvider(_typesProvider);
+  //      [Fact]
+  //      public void HandlerTypeProvider_should_provide_handler_by_message_type()
+  //      {
+  //          var sut = new HandlerTypeProvider(_typesProvider);
 
-            sut.GetByMessageType(typeof(HPTestCommand)).Should().Be<HPTestCommandHandler>();
-            sut.GetByMessageType(typeof(HPTestQuery)).Should().Be<HPTestQueryHandler>();
-        }
+  //          sut.GetByMessageType(typeof(HPTestCommand)).Should().Be<HPTestCommandHandler>();
+  //          sut.GetByMessageType(typeof(HPTestQuery)).Should().Be<HPTestQueryHandler>();
+  //      }
     }
 }

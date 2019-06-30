@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <ApplicationIcon />
-    <OutputType>Exe</OutputType>
-    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="tBlabs.Cqrs.Core" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CqrsDemo\tBlabs.Cqrs.Core.csproj" />
-    <ProjectReference Include="..\FeatureX\FeatureX.csproj" />
   </ItemGroup>
 
 </Project>

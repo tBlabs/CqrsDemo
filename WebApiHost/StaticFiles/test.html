@@ -84,12 +84,18 @@ to
 			<td>Should return error message (string)<br /><span class="small">with HTTP 500</span></td>
 			<td><button id="SendSampleCommandThrowingException">SEND</button></td>
 		</tr>
-		<tr>
-			<td>{ "SampleSaveFileCommand": { "SaveAs": "foo.txt" } }<br /><span class="small">returning nothing</span></td>
-			<td id="SampleSaveFileCommandReturnedValue">(press Send to see)</td>
-			<td>Should return nothing<br /><span class="small">with HTTP 200</span></td>
-			<td><input type="file" id="FileSelector" name="file" multiple><button id="SendFile">SEND</button></td>
-		</tr>
+        <tr>
+            <td>{ "SampleSaveFileCommand": { "SaveAs": "foo.txt" } }<br /><span class="small">returning nothing</span></td>
+            <td id="SampleSaveFileCommandReturnedValue">(press Send to see)</td>
+            <td>Should return nothing<br /><span class="small">with HTTP 200</span></td>
+            <td><input type="file" id="FileSelector" name="file" multiple><button id="SendFile">SEND</button></td>
+        </tr>
+        <tr>
+            <td>{ "FeatureXSampleQuery": { "Value": 5 } }<br /><span class="small">returning primitive int</span></td>
+            <td id="FeatureXSampleQueryReturnedValue">(press Send to see)</td>
+            <td>Should be 25 (int)<br /><span class="small">with HTTP 200</span></td>
+            <td><button id="SendFeatureXSampleQuery">SEND</button></td>
+        </tr>
 	</table>
 	<br /><br /><br />
 	<span class="small" id="clock"></span><span class="small"> (should tick if page works)</span>
@@ -129,7 +135,15 @@ to
 			{
 				this.SaveAs = saveAs;
 			}
-		}
+        }
+
+        class FeatureXSampleQuery
+        {
+            constructor(value)
+            {
+                this.Value = value;
+            }
+        }
 
 		class MessageBus
 		{
@@ -205,8 +219,8 @@ to
 
 		OnClick("#SendSampleQuery", async () =>
 		{
-			const command = new SampleQuery(2);
-			const message = { [SampleQuery.name]: command };
+			const query = new SampleQuery(2);
+			const message = { [SampleQuery.name]: query };
 			const response = await MessageBus.Send(message, "primitive");
 			Set("#SampleQueryReturnedValue", response);
 		});
@@ -257,7 +271,14 @@ to
 			}
 		});
 
-
+        
+        OnClick("#SendFeatureXSampleQuery", async () =>
+        {
+            const query = new FeatureXSampleQuery(2);
+            const message = { [FeatureXSampleQuery.name]: query };
+            const response = await MessageBus.Send(message, "primitive");
+            Set("#FeatureXSampleQueryReturnedValue", response);
+        });
 
 		setInterval(() => Set("#clock", new Date().toLocaleTimeString()), 1000);
 

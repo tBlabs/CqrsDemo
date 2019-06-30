@@ -12,12 +12,14 @@ namespace WebApiHost
 	{
 		public void ConfigureServices(IServiceCollection services)
 		{
+           // services.AddMessages(FeatureX.)
+           // services.AddHandlers(FeatureX)
 			services.AddCqrs();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
-			app.UseHttpsRedirection();
+			//app.UseHttpsRedirection();
 			app.UseStaticFiles(new StaticFileOptions
 			{
 				FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles")),

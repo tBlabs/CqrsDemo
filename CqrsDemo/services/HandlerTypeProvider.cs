@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using tBlabs.Cqrs.Core.Exceptions;
 using tBlabs.Cqrs.Core.Interfaces;
 
@@ -7,11 +8,13 @@ namespace tBlabs.Cqrs.Core.Services
 {
     public class HandlerTypeProvider : IHandlerTypeProvider
     {
-        private readonly Dictionary<Type, Type> messageTypeToHandlerType = new Dictionary<Type, Type>();
+        private readonly Dictionary<Type, Type> allMessageTypeToHandlerType = new Dictionary<Type, Type>();
 
-        public HandlerTypeProvider(ITypesProvider thisSolutionTypes)
+        public Type[] Handlers => allMessageTypeToHandlerType.Values.ToArray();
+
+        public void RegisterHandlers(Type[] types)
         {
-            foreach (var t in thisSolutionTypes.Types)
+            foreach (var t in types)
             {
                 if (!t.IsClass) continue;
                 if (t.IsAbstract) continue;
@@ -36,19 +39,19 @@ namespace tBlabs.Cqrs.Core.Services
 
                     var messageType = i.GenericTypeArguments[0];
 
-                    messageTypeToHandlerType.Add(messageType, t);
+                    allMessageTypeToHandlerType.Add(messageType, t);
                 }
             }
         }
 
         public Type GetByMessageType(Type messageType)
         {
-            if (!messageTypeToHandlerType.ContainsKey(messageType))
+            if (!allMessageTypeToHandlerType.ContainsKey(messageType))
             {
 	            throw new HandlerNotFoundException(messageType);
             }
 
-            return messageTypeToHandlerType[messageType];
+            return allMessageTypeToHandlerType[messageType];
         }
     }
 }

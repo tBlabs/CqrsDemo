@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -20,13 +21,14 @@ namespace WebApiHost
 				.UseStartup<Startup>();
 
 		private static void LoadAssembliesToAllowReflectionAccessOtherSolutionProjects()
-		{
+		{       
 			var dependencies = DependencyContext.Default.RuntimeLibraries;
 
 			foreach (var library in dependencies)
 			{
 				try
 				{
+                    File.AppendAllText("loading.txt", new AssemblyName(library.Name) + Environment.NewLine);
 					Assembly.Load(new AssemblyName(library.Name));
 				}
 				catch (Exception)

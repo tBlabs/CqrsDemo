@@ -14,9 +14,10 @@ namespace tBlabs.Cqrs.Core.Services
 				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 				{
 					types.AddRange(assembly.GetTypes());
-				}
 
-				return types.ToArray();
+                }
+
+                return types.ToArray();
 			}
 		}
     }
