@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CqrsDemo.Test\tBlabs.Cqrs.Core.Tests.csproj" />
+    <ProjectReference Include="..\ProjectA\ModuleA.csproj" />
     <ProjectReference Include="..\WebApiHost\WebApiHost.csproj" />
   </ItemGroup>
 

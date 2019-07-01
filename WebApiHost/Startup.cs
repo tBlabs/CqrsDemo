@@ -12,12 +12,12 @@ namespace WebApiHost
 	{
 		public void ConfigureServices(IServiceCollection services)
 		{
-           // services.AddMessages(FeatureX.)
-           // services.AddHandlers(FeatureX)
-			services.AddCqrs();
-		}
+			services.AddCqrs()
+                .AddModule<ModuleA.Config>()
+                .AddModule<ModuleB.Config>();
+        }
 
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
 			//app.UseHttpsRedirection();
 			app.UseStaticFiles(new StaticFileOptions

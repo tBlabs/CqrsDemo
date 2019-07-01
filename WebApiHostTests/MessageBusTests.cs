@@ -5,195 +5,137 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
+using ModuleA;
+using ModuleB;
 using Newtonsoft.Json;
 using Shouldly;
 using tBlabs.Cqrs.Core.Interfaces;
+using tBlabs.Cqrs.Middleware;
 using WebApiHost.Tests.Helpers;
 using Xunit;
 
 namespace WebApiHost.Tests
 {
-	public class WebApiHostIntegrationTests : IClassFixture<WebApplicationFactory<WebApiHost.Startup>>
-	{
-		public class Command : ICommand
-		{
-			public int Value { get; set; }
-		}
+    public class WebApiHostIntegrationTests : IClassFixture<WebApplicationFactory<WebApiHost.Startup>>
+    {
+        private readonly HttpClient client;
 
-		public class CommandHandler : ICommandHandler<Command>
-		{
-			public Task Handle(Command command)
-			{
-				return Task.CompletedTask;
-			}
-		}
+        public WebApiHostIntegrationTests(WebApplicationFactory<WebApiHost.Startup> factory)
+        {
+            client = factory.CreateClient();
+        }
 
+        #region Helpers
 
-		public class Query : IQuery<int>
-		{
-			public int Value { get; set; }
-		}
+        private async Task<(HttpStatusCode, TResponse)> SendMessage<TResponse>(IMessage message)
+        {
+            string messageAsJson = message.ToJson();
+            var content = new StringContent(messageAsJson, Encoding.UTF8, "application/json");
 
-		public class QueryHandler : IQueryHandler<Query, Task<int>>
-		{
-			public Task<int> Handle(Query query)
-			{
-				if (query.Value == 0)
-				{
-					throw new Exception("SomeExceptionMessage");
-				}
+            var response = await client.PostAsync(CqrsBusMiddlewareOptions.Default.EndpointUrl, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
 
-				return Task.FromResult(query.Value * 2);
-			}
-		}
+            if (response.IsSuccessStatusCode)
+            {
+                var responseObject = JsonConvert.DeserializeObject<TResponse>(responseContent);
 
+                return (response.StatusCode, responseObject);
+            }
 
-		public class CommandWithStream : ICommandWithStream
-		{
-			public Stream Stream { get; set; }
-			public string Foo { get; set; }
-		}
+            return (response.StatusCode, (TResponse)(object)responseContent);
+        }
 
-		public class CommandWithStreamHandler : ICommandHandler<CommandWithStream>
-		{
-			public Task Handle(CommandWithStream command)
-			{
-				return Task.CompletedTask;
-			}
-		}
+        private async Task<HttpStatusCode> SendCommand(ICommand command)
+        {
+            var (http, response) = await SendMessage<object>(command);
+            response.ShouldBeNull();
+            return http;
+        }
 
+        private async Task<(HttpStatusCode, TResponse)> PostMessage<TResponse>(IMessage message, Stream stream)
+        {
+            string messageAsJson = message.ToJson();
+            var content = new StreamContent(stream);
+            content.Headers.Add(CqrsBusMiddlewareOptions.Default.MessageHeader, messageAsJson);
 
-		public class NotRegisteredMessage : IMessage
-		{ }
+            var response = await client.PostAsync(CqrsBusMiddlewareOptions.Default.EndpointUrl, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
 
-		private readonly HttpClient client;
+            if (response.IsSuccessStatusCode)
+            {
+                var responseObject = JsonConvert.DeserializeObject<TResponse>(responseContent);
 
-		public WebApiHostIntegrationTests(WebApplicationFactory<WebApiHost.Startup> factory)
-		{
-			//_factory = factory;
-			client = factory.CreateClient();
-			//var typesProviderMock = new Mock<ITypesProvider>();
-			//typesProviderMock.Setup(x => x.Types).Returns(new Type[]
-			//{
-			//	typeof(Command), typeof(Query),
-			//	typeof(CommandHandler), typeof(QueryHandler),
-			//	typeof(CommandWithStream), typeof(CommandWithStreamHandler)
-			//});
+                return (response.StatusCode, responseObject);
+            }
 
-			//client = factory.WithWebHostBuilder(builder =>
-			//		builder.ConfigureServices(services =>
-			//			services.AddSingleton<ITypesProvider>(typesProviderMock.Object)))
-			//	.CreateClient();
-		}
+            return (response.StatusCode, (TResponse)(object)responseContent);
+        }
 
-		#region Helpers
+        #endregion
 
-		private async Task<(HttpStatusCode, TResponse)> SendMessage<TResponse>(IMessage message)
-		{
-			string messageAsJson = message.ToJson();
-			var content = new StringContent(messageAsJson, Encoding.UTF8, "application/json");
-			//content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        [Fact]
+        public async Task Should_execute_handler_from_external_module()
+        {
+            var query = new DoubleValueQuery { Value = 5 };
 
-			var response = await client.PostAsync("/CqrsBus", content);
-			var responseContent = await response.Content.ReadAsStringAsync();
+            var (httpStatus, response) = await SendMessage<int>(query);
 
-			if (response.IsSuccessStatusCode)
-			{
-				var responseObject = JsonConvert.DeserializeObject<TResponse>(responseContent);
+            response.ShouldBe(10);
+        }
 
-				return (response.StatusCode, responseObject);
-			}
-			else
-			{
-				return (response.StatusCode, (TResponse)(object)responseContent);
-			}
-		}
+        [Fact]
+        public async Task Command_should_be_executed()
+        {
+            var message = new Command { Value = 3 };
 
-		private async Task<HttpStatusCode> SendCommand(ICommand command)
-		{
-			var (http, response) = await SendMessage<object>(command);
-			response.ShouldBeNull();
-			return http;
-		}
+            var httpStatus = await SendCommand(message);
 
+            httpStatus.ShouldBe(HttpStatusCode.OK);
+        }
 
-		private async Task<(HttpStatusCode, TResponse)> PostMessage<TResponse>(IMessage message, Stream stream)
-		{
-			string messageAsJson = message.ToJson();
-			var content = new StreamContent(stream);
-			content.Headers.Add("Message", messageAsJson);
+        [Fact]
+        public async Task Query_should_be_executed()
+        {
+            var message = new Query { Value = 2 };
 
-			var response = await client.PostAsync("/CqrsBus", content);
-			var responseContent = await response.Content.ReadAsStringAsync();
+            var (httpStatus, response) = await SendMessage<int>(message);
 
-			if (response.IsSuccessStatusCode)
-			{
-				var responseObject = JsonConvert.DeserializeObject<TResponse>(responseContent);
+            httpStatus.ShouldBe(HttpStatusCode.OK);
+            response.ShouldBe(4);
+        }
 
-				return (response.StatusCode, responseObject);
-			}
-			else
-			{
-				return (response.StatusCode, (TResponse)(object)responseContent);
-			}
-		}
+        [Fact]
+        public async Task Command_with_stream_should_be_executed()
+        {
+            var message = new CommandWithStream { Foo = "bar" };
+            var stream = new MemoryStream();
 
-		#endregion
+            var (httpStatus, response) = await PostMessage<object>(message, stream);
 
+            httpStatus.ShouldBe(HttpStatusCode.OK);
+            response.ShouldBeNull();
+        }
 
-		[Fact]
-		public async Task Command_should_be_executed()
-		{
-			var message = new Command { Value = 3 };
+        [Fact]
+        public async Task Not_existing_message_should_return_404()
+        {
+            var message = new NotRegisteredMessage();
 
-			var httpStatus = await SendCommand(message);
+            var (httpStatus, response) = await SendMessage<string>(message);
 
-			httpStatus.ShouldBe(HttpStatusCode.OK);
-		}
+            httpStatus.ShouldBe(HttpStatusCode.NotFound);
+            response.ShouldContain("not found");
+        }
 
-		[Fact]
-		public async Task Query_should_be_executed()
-		{
-			var message = new Query { Value = 2 };
+        [Fact]
+        public async Task Handler_exception_should_be_catch()
+        {
+            var message = new Query { Value = 0 }; // Value==0 make handler to throw
 
-			var (httpStatus, response) = await SendMessage<int>(message);
+            var (httpStatus, response) = await SendMessage<string>(message);
 
-			httpStatus.ShouldBe(HttpStatusCode.OK);
-			response.ShouldBe(4);
-		}
-
-		[Fact]
-		public async Task Command_with_stream_should_be_executed()
-		{
-			var message = new CommandWithStream { Foo = "bar" };
-			var stream = new MemoryStream();
-
-			var (httpStatus, response) = await PostMessage<object>(message, stream);
-
-			httpStatus.ShouldBe(HttpStatusCode.OK);
-			response.ShouldBeNull();
-		}
-
-		[Fact]
-		public async Task Not_existing_message_should_return_404()
-		{
-			var message = new NotRegisteredMessage();
-
-			var (httpStatus, response) = await SendMessage<string>(message);
-
-			httpStatus.ShouldBe(HttpStatusCode.NotFound);
-			response.ShouldContain("not found");
-		}
-
-		[Fact]
-		public async Task Handler_exception_should_be_catch()
-		{
-			var message = new Query { Value = 0 }; // Value==0 will make handler to throw exception
-			
-			var (httpStatus, response) = await SendMessage<string>(message);
-
-			httpStatus.ShouldBe(HttpStatusCode.InternalServerError);
-			response.ShouldBe("SomeExceptionMessage");
-		}
-	}
+            httpStatus.ShouldBe(HttpStatusCode.InternalServerError);
+            response.ShouldBe("SomeExceptionMessage");
+        }
+    }
 }

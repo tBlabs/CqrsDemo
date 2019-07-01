@@ -12,16 +12,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CqrsDemo\tBlabs.Cqrs.Core.csproj" />
-    <ProjectReference Include="..\FeatureX\FeatureX.csproj" />
     <ProjectReference Include="..\Middlewares\tBlabs.Cqrs.Middleware.csproj" />
     <ProjectReference Include="..\ModuleB\ModuleB.csproj" />
     <ProjectReference Include="..\ProjectA\ModuleA.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="StaticFiles\CqrsBusPlayground.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

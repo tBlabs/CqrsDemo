@@ -11,7 +11,7 @@ namespace WebApiHost
 	{
 		public static void Main(string[] args)
 		{
-			LoadAssembliesToAllowReflectionAccessOtherSolutionProjects();
+		//	LoadAssembliesToAllowReflectionAccessOtherSolutionProjects();
 
 			CreateWebHostBuilder(args).Build().Run();
 		}
