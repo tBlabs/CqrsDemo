@@ -42,3 +42,8 @@ packages/MSTest\.TestAdapter\.1\.2\.0/
 *.dll
 
 *.nupkg
+
+Priv
+/Priv
+Priv/
+NugetKey.txt

@@ -1,4 +1,4 @@
-﻿# CQRS Framework
+# CQRS Framework
 
 Advantages of CQRS:
 - drasticly simplifies client-server comunication
@@ -81,6 +81,11 @@ Middleware may be configured with `CqrsBusMiddlewareOptions` object, like so:
 app.UseCqrsBus(new CqrsBusMiddlewareOptions() { EndpointUrl = "/SomeEndpoint" });
 ```
 Default value for `EndpointUrl` is `/CqrsBus` so there is no need to define one. Every HTTP method is accepted.
+
+### Diagnostic middleware
+
+Use `app.UseMiddleware<DiagnosticMiddleware>();`
+to be able to use `/CqrsInfo` to print all registered messages.		
 
 ## Javascript client
 
