@@ -1,9 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyModel;
 
 namespace WebApiHost
 {
