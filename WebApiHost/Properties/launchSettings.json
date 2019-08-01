@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "files/test.html",
+      "launchUrl": "files/CqrsBusPlayground.html",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

@@ -26,7 +26,7 @@ namespace tBlabs.Cqrs.Core.Extensions
             return services;
         }
 
-        public static IServiceCollection AddHandler<T>(this IServiceCollection services) where T: class
+        public static IServiceCollection AddHandler<T>(this IServiceCollection services) where T: class // TODO: class --> IMessageHandler
         {
             services.AddScoped<T>();
 
@@ -35,16 +35,16 @@ namespace tBlabs.Cqrs.Core.Extensions
 
         public static void AddHandlers<T>(this IServiceCollection services)
         {
-            Type cm = typeof(T);
-            var m = cm.Assembly.GetTypes();
+            Type t = typeof(T);
+            var types = t.Assembly.GetTypes();
 
-            foreach (var type in m)
+            foreach (var type in types)
             {
-                var inter = type.GetInterfaces();
+                var interfaces = type.GetInterfaces();
 
-                foreach (var type1 in inter)
+                foreach (var i in interfaces)
                 {
-                    if (type1.IsAssignableFrom(typeof(IModule)))
+                    if (i.IsAssignableFrom(typeof(IModule)))
                     {
                         Object o = Activator.CreateInstance(type);
                         var mod = (IModule)o;

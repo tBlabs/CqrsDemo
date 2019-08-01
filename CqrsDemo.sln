@@ -21,6 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tBlabs.Cqrs.Middleware", "M
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9D339C96-C9D7-461C-A93F-352CC64F7C8D}"
 	ProjectSection(SolutionItems) = preProject
+		NugetPush.md = NugetPush.md
 		NugetPush.txt = NugetPush.txt
 	EndProjectSection
 EndProject
@@ -31,15 +32,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeatureX", "FeatureX\FeatureX.csproj", "{D02DCC18-87CA-4DE9-8664-9F7FA2B9B1B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeatureX", "FeatureX\FeatureX.csproj", "{D02DCC18-87CA-4DE9-8664-9F7FA2B9B1B8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{76F1BC9C-6EE1-45E1-B8D4-643E4A48B45B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModuleA", "ProjectA\ModuleA.csproj", "{613D211B-0314-4F4C-9AF7-64ED9DB621AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModuleA", "ProjectA\ModuleA.csproj", "{613D211B-0314-4F4C-9AF7-64ED9DB621AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiModuleWebApi.Tests", "MultiModuleWebApi.Tests\MultiModuleWebApi.Tests.csproj", "{439BF598-F7F5-436E-8980-16F0951B1212}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiModuleWebApi.Tests", "MultiModuleWebApi.Tests\MultiModuleWebApi.Tests.csproj", "{439BF598-F7F5-436E-8980-16F0951B1212}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModuleB", "ModuleB\ModuleB.csproj", "{9DAF5875-3513-4E89-B774-4041EFEEEB39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModuleB", "ModuleB\ModuleB.csproj", "{9DAF5875-3513-4E89-B774-4041EFEEEB39}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{867C2B3C-50F2-40D6-9C47-2E856FEC5B76}"
 EndProject
