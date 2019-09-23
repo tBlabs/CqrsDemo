@@ -22,8 +22,8 @@ namespace tBlabs.Cqrs.Middleware.Extensions
 		public static async Task Json(this HttpResponse response, object obj)
 		{
 			response.StatusCode = (int)HttpStatusCode.OK;
-			var serializedObj = JsonConvert.SerializeObject(obj);
-			await response.WriteAsync(serializedObj);
+			var serializedObject = JsonConvert.SerializeObject(obj);
+			await response.WriteAsync(serializedObject);
 		}
 	}
 }

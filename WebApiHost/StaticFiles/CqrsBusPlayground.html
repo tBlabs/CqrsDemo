@@ -44,7 +44,7 @@ Every Message will be send via
     <option value="DELETE">DELETE</option>
 </select>
 to 
-<input type="text" id="cqrsBusAddr" value="http://localhost:1234/CqrsBus"/>
+<input type="text" id="BackendUrl" value="http://localhost:{port}/CqrsBus"/>
 	<table>
 		<tr>
 			<th>Message (Command or Query)</th>
@@ -74,236 +74,245 @@ to
 			<td>{ "NotExistingMessage": { "Foo": "bar" } }<br /><span class="small">(not registered message, returning error)</span></td>
 			<td id="NotExistingMessageReturnedValue">(press Send to see)</td>
 			<td>Should be error message (string)<br /><span class="small">with HTTP 404</span></td>
-			<td><button id="SendNotExistingMessage">SEND</button><br /><span class="small">and be aware of VS Debugger</span></td>
+			<td><button id="SendNotExistingMessage">SEND</button><br/><span class="small">and be aware of VS Debugger</span></td>
 		</tr>
 		<tr>
 			<td>{ "SampleCommand": { "Foo": "throw" } }<br /><span class="small">returning exception (when Foo=throw)</span></td>
 			<td id="SampleCommandThrowingExceptionReturnedValue">(press Send to see)</td>
 			<td>Should return error message (string)<br /><span class="small">with HTTP 500</span></td>
-			<td><button id="SendSampleCommandThrowingException">SEND</button></td>
+			<td><button id="SendSampleCommandThrowingException">SEND</button><br/><span class="small">and be aware of VS Debugger</span></td>
 		</tr>
         <tr>
-            <td>{ "SampleSaveFileCommand": { "SaveAs": "foo.txt" } }<br /><span class="small">returning nothing</span></td>
-            <td id="SampleSaveFileCommandReturnedValue">(press Send to see)</td>
+            <td>{ "SampleUploadFileCommand": { "Value": "foo.txt" } }<br /><span class="small">returning nothing</span></td>
+            <td id="SampleUploadFileCommandReturnedValue">(press Send to see)</td>
             <td>Should return nothing<br /><span class="small">with HTTP 200</span></td>
-            <td><input type="file" id="FileSelector" name="file" multiple><button id="SendFile">SEND</button></td>
+            <td><input type="file" id="FileSelector" name="file" multiple>
+                <button id="SendSampleUploadFileCommand">SEND</button></td>
         </tr>
         <tr>
-            <td>{ "FeatureXSampleQuery": { "Value": 5 } }<br /><span class="small">returning primitive int</span></td>
-            <td id="FeatureXSampleQueryReturnedValue">(press Send to see)</td>
-            <td>Should be 25 (int)<br /><span class="small">with HTTP 200</span></td>
-            <td><button id="SendFeatureXSampleQuery">SEND</button></td>
+            <td>{ "SampleDownloadFileQuery": { "Value": 6 } }<br /><span class="small">returning file</span></td>
+            <td id="SampleDownloadFileQueryReturnedValue">(press Send to see)</td>
+            <td>Should be a file 'file.txt' in Download tab<br /><span class="small">with HTTP 200</span></td>
+            <td><button id="SendSampleDownloadFileQuery">SEND</button></td>
         </tr>
 	</table>
 	<br /><br /><br />
 	<span class="small" id="clock"></span><span class="small"> (should tick if page works)</span>
-	<script type="text/javascript">
+<script type="text/javascript">
 
-		class SampleCommand
-		{
-			constructor(value)
-			{
-				this.Foo = value;
-			}
-		}
+    document.querySelector("#BackendUrl").value = window.location.origin + "/CqrsBus";
+    console.log("Connecting to " + document.querySelector("#BackendUrl").value);
 
-		class SampleQuery
-		{
-			constructor(value)
-			{
-				this.Value = value;
-			}
-		}
-
-		class SampleCommandReturningObject
-		{ }
-
-		class SampleQueryReturningObject
-		{
-			constructor(a, b)
-			{
-				this.A = a;
-				this.B = b;
-			}
-		}
-
-		class SampleSaveFileCommand
-		{
-			constructor(saveAs)
-			{
-				this.SaveAs = saveAs;
-			}
-        }
-
-        class FeatureXSampleQuery
+    class SampleCommand
+    {
+        constructor(value)
         {
-            constructor(value)
+            this.Foo = value;
+        }
+    }
+
+    class SampleQuery
+    {
+        constructor(value)
+        {
+            this.Value = value;
+        }
+    }
+
+    class SampleCommandReturningObject
+    { }
+
+    class SampleQueryReturningObject
+    {
+        constructor(a, b)
+        {
+            this.A = a;
+            this.B = b;
+        }
+    }
+
+    class SampleUploadFileCommand
+    {
+        constructor(value)
+        {
+            this.Value = value;
+        }
+    }     
+
+    class SampleDownloadFileQuery
+    {
+        constructor(value)
+        {
+            this.Value = value;
+        }
+    }
+
+    class MessageBus
+    {
+        static async Send(message, returnedType)
+        {
+            try
             {
-                this.Value = value;
+                console.log("Sending (" + GetMethod() + " " + GetEndpoint() + "): ", message, "...");
+                const response = await fetch(GetEndpoint(),
+                    {
+                        method: GetMethod(),
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(message)
+                    });
+
+                let data = null;
+                if (returnedType === "primitive") {
+                    data = await response.text();
+                }
+                else if (returnedType === "object") {
+                    data = await response.json();
+                }
+                else if (returnedType === "stream") {
+                    data = response.blob();
+                }
+
+                if (response.ok)
+                {
+                    console.log("Response: ", data);
+
+                    return data;
+                }
+                else
+                {
+                    throw Error(data);
+                }
+            }
+            catch (error)
+            {
+                console.log("Error:", error.message);
+                throw error.message;
             }
         }
 
-		class MessageBus
-		{
-			static async Send(message, returnedType)
-			{
-				try
-				{
-					console.log("Sending (" + GetMethod() + " " + GetEndpoint() + "): ", message, "...");
-					const response = await fetch(GetEndpoint(),
-						{
-							method: GetMethod(),
-							headers: { "Content-Type": "application/json" },
-							body: JSON.stringify(message)
-						});
-
-					let data = null;
-					if (returnedType === "primitive")
-					{
-						data = await response.text();
-					}
-					else if (returnedType === "object")
-					{
-						data = await response.json();
-					}
-
-					if (response.ok)
-					{
-						console.log("Response: ", data);
-
-						return data;
-					}
-					else
-					{
-						throw Error(data);
-					}
-				}
-				catch (error)
-				{
-					console.log("Error:", error.message);
-					throw error.message;
-				}
-			}
-
-			static async SendWithFile(message, file)
-			{
-				try
-				{
-					console.log("Sending (" + GetMethod() + " " + GetEndpoint() + "): ", message, "...");
-					const response = await fetch(GetEndpoint(),
-						{
-							method: GetMethod(),
-							body: file,
-							headers: { "Message": JSON.stringify(message) }
-						});
-					const data = await response.text();
-					console.log("Response: ", data);
-				}
-				catch (error)
-				{
-					console.log("Error:", error);
-					return error.message;
-				}
-			}
-		}
-
-		OnClick("#SendSampleCommand", async () =>
-		{
-			const command = new SampleCommand("bar");
-			const message = { [SampleCommand.name]: command };
-			const response = await MessageBus.Send(message, "primitive");
-			Set("#SampleCommandReturnedValue", response);
-		});
-
-		OnClick("#SendSampleQuery", async () =>
-		{
-			const query = new SampleQuery(2);
-			const message = { [SampleQuery.name]: query };
-			const response = await MessageBus.Send(message, "primitive");
-			Set("#SampleQueryReturnedValue", response);
-		});
-
-		OnClick("#SendSampleQueryReturningObject", async () =>
-		{
-			const command = new SampleQueryReturningObject(2, 3);
-			const message = { [SampleQueryReturningObject.name]: command };
-			const response = await MessageBus.Send(message, "object");
-			Set("#SampleQueryReturningObjectReturnedValue", response, true);
-		});
-
-
-		OnClick("#SendFile", async () =>
-		{
-			const fileInput = document.querySelector("#FileSelector");
-			const file = fileInput.files[0];
-			const command = new SampleSaveFileCommand("foo.txt");
-			const message = { [SampleSaveFileCommand.name]: command };
-			const response = await MessageBus.SendWithFile(message, file, "primitive");
-			Set("#SampleSaveFileCommandReturnedValue", response);
-		});
-
-		OnClick("#SendNotExistingMessage", async () =>
-		{
-			try
-			{
-				const notExistingMessage = { NotExistingMessage: {} };
-				await MessageBus.Send(notExistingMessage, "primitive");
-			}
-			catch (e)
-			{
-				Set("#NotExistingMessageReturnedValue", e);
-			}
-		});
-
-		OnClick("#SendSampleCommandThrowingException", async () =>
-		{
-			try
-			{
-				const command = new SampleCommand("throw");
-				const message = { [SampleCommand.name]: command };
-				await MessageBus.Send(message, "primitive");
-			}
-			catch (e)
-			{
-				Set("#SampleCommandThrowingExceptionReturnedValue", e);
-			}
-		});
-
-        
-        OnClick("#SendFeatureXSampleQuery", async () =>
+        static async SendWithFile(message, file)
         {
-            const query = new FeatureXSampleQuery(2);
-            const message = { [FeatureXSampleQuery.name]: query };
-            const response = await MessageBus.Send(message, "primitive");
-            Set("#FeatureXSampleQueryReturnedValue", response);
-        });
+            try
+            {
+                console.log("Sending (" + GetMethod() + " " + GetEndpoint() + "): ", message, "...");
+                const response = await fetch(GetEndpoint(),
+                    {
+                        method: GetMethod(),
+                        body: file,
+                        headers: { "Message": JSON.stringify(message) }
+                    });
+                const data = await response.text();
+                console.log("Response: ", data);
+            }
+            catch (error)
+            {
+                console.log("Error:", error);
+                return error.message;
+            }
+        }
+    }
 
-		setInterval(() => Set("#clock", new Date().toLocaleTimeString()), 1000);
+    OnClick("#SendSampleCommand", async () =>
+    {
+        const command = new SampleCommand("bar");
+        const message = { [SampleCommand.name]: command };
+        const response = await MessageBus.Send(message, "primitive");
+        Set("#SampleCommandReturnedValue", response);
+    });
+
+    OnClick("#SendSampleQuery", async () =>
+    {
+        const query = new SampleQuery(2);
+        const message = { [SampleQuery.name]: query };
+        const response = await MessageBus.Send(message, "primitive");
+        Set("#SampleQueryReturnedValue", response);
+    });
+
+    OnClick("#SendSampleQueryReturningObject", async () =>
+    {
+        const command = new SampleQueryReturningObject(2, 3);
+        const message = { [SampleQueryReturningObject.name]: command };
+        const response = await MessageBus.Send(message, "object");
+        Set("#SampleQueryReturningObjectReturnedValue", response, true);
+    });
+
+    OnClick("#SendNotExistingMessage", async () =>
+    {
+        try
+        {
+            const notExistingMessage = { NotExistingMessage: {} };
+            await MessageBus.Send(notExistingMessage, "primitive");
+        }
+        catch (e)
+        {
+            Set("#NotExistingMessageReturnedValue", e);
+        }
+    });
+
+    OnClick("#SendSampleCommandThrowingException", async () =>
+    {
+        try
+        {
+            const command = new SampleCommand("throw");
+            const message = { [SampleCommand.name]: command };
+            await MessageBus.Send(message, "primitive");
+        }
+        catch (e)
+        {
+            Set("#SampleCommandThrowingExceptionReturnedValue", e);
+        }
+    });
+
+    OnClick("#SendSampleUploadFileCommand", async () =>
+    {
+        const fileInput = document.querySelector("#FileSelector");
+        const file = fileInput.files[0];
+        const command = new SampleUploadFileCommand("foo.txt");
+        const message = { [SampleUploadFileCommand.name]: command };
+        const response = await MessageBus.SendWithFile(message, file, "primitive");
+        Set("#SampleUploadFileCommandReturnedValue", response);
+    });
+
+    OnClick("#SendSampleDownloadFileQuery", async () =>
+    {
+        const query = new SampleDownloadFileQuery(6);
+        const message = { [SampleDownloadFileQuery.name]: query };
+        const response = await MessageBus.Send(message, "stream");
+        const url = window.URL.createObjectURL(new Blob([response]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'file.txt');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        Set("#SampleDownloadFileQueryReturnedValue", "File should be downloaded");
+    });
+
+    setInterval(() => Set("#clock", new Date().toLocaleTimeString()), 1000);
 
 
-		document.querySelector("#cqrsBusAddr").value = window.location.origin + "/CqrsBus";
+     
+    function GetEndpoint() {
+        return document.querySelector("#BackendUrl").value;
+    }
 
-		function GetEndpoint() {
-			return document.querySelector("#cqrsBusAddr").value;
-		}
+    function GetMethod() {
+        return document.querySelector("#httpMethod").value;
+    }
 
-		function GetMethod() {
-			return document.querySelector("#httpMethod").value;
-		}
+    function OnClick(selector, callback)
+    {
+        document.querySelector(selector).addEventListener('click', callback);
+    }
 
-		function OnClick(selector, callback)
-		{
-			document.querySelector(selector).addEventListener('click', callback);
-		}
-
-		function Set(selector, value, json = false)
-		{
-			if (json)
-				document.querySelector(selector).innerHTML = JSON.stringify(value);
-			else
-				document.querySelector(selector).innerHTML = value;
-		}
-	</script>
+    function Set(selector, value, json = false)
+    {
+        if (json)
+            document.querySelector(selector).innerHTML = JSON.stringify(value);
+        else
+            document.querySelector(selector).innerHTML = value;
+    }
+</script>
 </body>
 
 </html>

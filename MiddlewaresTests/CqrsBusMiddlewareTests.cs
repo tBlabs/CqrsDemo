@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -104,8 +106,8 @@ namespace tBlabs.Cqrs.Middleware.Tests
 			var messageBusMock = new Mock<IMessageBus>();
 			messageBusMock.Setup(x => x.Execute(It.IsAny<string>(), null))
 				.Throws(new Exception("some exception message"));
-			var httpContext = new DefaultHttpContext();
 
+            var httpContext = new DefaultHttpContext();
 			httpContext.Request.Path = CqrsBusMiddlewareOptions.Default.EndpointUrl;
 			httpContext.Response.Body = new MemoryStream();
 
@@ -119,8 +121,34 @@ namespace tBlabs.Cqrs.Middleware.Tests
 			httpContext.Response.Body.ReadAsString().ShouldBe("some exception message");
 		}
 
-		[Fact]
-		public async void Next_middleware_should_be_called_if_path_was_different_than_CqrsBus()
+        [Fact]
+        public async void Stream_should_be_returned_for_query_returning_stream()
+        {
+            // Given
+            var nextMock = new Mock<RequestDelegate>();
+
+            var messageBusMock = new Mock<IMessageBus>();
+            messageBusMock.Setup(x => x.Execute(It.IsAny<string>(), null))
+                .Returns(Task.FromResult((object)new MemoryStream(Encoding.ASCII.GetBytes("StreamData1"))));
+
+            var sut = new CqrsBusMiddleware(nextMock.Object, CqrsBusMiddlewareOptions.Default);
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.Response.Body = new MemoryStream();
+            httpContext.Request.Path = CqrsBusMiddlewareOptions.Default.EndpointUrl;
+
+            // When
+            await sut.InvokeAsync(httpContext, messageBusMock.Object);
+
+            // Then
+            httpContext.Response.StatusCode.ShouldBe((int)HttpStatusCode.OK);
+
+            httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+            httpContext.Response.Body.ReadAsString().ShouldBe("StreamData1");
+        }
+
+        [Fact]
+		public async void Next_middleware_should_be_called_if_path_was_different_than_selected()
 		{
 			// Given
 			var nextMock = new Mock<RequestDelegate>();

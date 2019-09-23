@@ -12,7 +12,8 @@ namespace WebApiHost
             services.AddHandler<SampleCommandHandler>();
             services.AddHandler<SampleQueryHandler>();
             services.AddHandler<SampleQueryReturningObjectHandler>();
-            services.AddHandler<SampleSaveFileCommandHandler>();
+            services.AddHandler<SampleUploadFileCommandHandler>();
+            services.AddHandler<SampleDownloadFileQueryHandler>();
         }
 
         public void RegisterCqrsStuff(IMessageTypeProvider messageTypeProvider, IHandlerTypeProvider handlerTypeProvider)

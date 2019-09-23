@@ -59,14 +59,23 @@ namespace tBlabs.Cqrs.Middleware
 			return context.Request.Headers[CqrsBusMiddlewareOptions.Default.MessageHeader].ToString().IsNotEmpty();
 		}
 
-		private async Task ProcessMessage(HttpContext context, IMessageBus messageBus)
+        private async Task ProcessMessage(HttpContext context, IMessageBus messageBus)
 		{
 			string message = context.Request.Body.ReadAsString();
 
-			var messageExecutionResult = await messageBus.Execute(message);
+            var messageExecutionResult = await messageBus.Execute(message);
 
-			await context.Response.Json(messageExecutionResult);
-		}
+            if (messageExecutionResult is Stream responseStream)
+            {
+                responseStream.CopyTo(context.Response.Body);
+
+                responseStream.Dispose(); // Dispołsować powinien ten kto stworzył ale nie wiem jak to inaczej rozwiązać, może wsadzić messageBus.Execute w usinga?
+            }
+            else
+            {
+                await context.Response.Json(messageExecutionResult);
+            }
+        }
 
 		private async Task ProcessMessageWithStream(HttpContext context, IMessageBus messageBus)
 		{
@@ -75,7 +84,16 @@ namespace tBlabs.Cqrs.Middleware
 
 			var messageExecutionResult = await messageBus.Execute(message, stream);
 
-			await context.Response.Json(messageExecutionResult);
+            if (messageExecutionResult is Stream responseStream)
+            {
+                responseStream.CopyTo(context.Response.Body);
+
+                responseStream.Dispose(); // Dispołsować powinien ten kto stworzył ale nie wiem jak to inaczej rozwiązać, może wsadzić messageBus.Execute w usinga?
+            }
+            else
+            {
+                await context.Response.Json(messageExecutionResult);
+            }
 		}
 	}
 }
