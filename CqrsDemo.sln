@@ -47,6 +47,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Priv", "Priv", "{0D5A9D46-868D-48B5-B4B1-8AFF5517E674}"
 	ProjectSection(SolutionItems) = preProject
 		NugetKey.txt = NugetKey.txt
+		NugetPush.md = NugetPush.md
 	EndProjectSection
 EndProject
 Global

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <ApplicationIcon />
     <StartupObject />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -14,15 +14,15 @@
     <PackageProjectUrl>https://github.com/tBlabs/CqrsDemo</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tBlabs/CqrsDemo</RepositoryUrl>
     <PackageReleaseNotes>Simple CQRS Framework for Web API development</PackageReleaseNotes>
-    <Version>1.3.0</Version>
-    <AssemblyVersion>1.3.0.0</AssemblyVersion>
-    <FileVersion>1.3.0.0</FileVersion>
+    <Version>1.4.0</Version>
+    <AssemblyVersion>1.4.0.0</AssemblyVersion>
+    <FileVersion>1.4.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation.AspNetCore" Version="7.6.103" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="8.5.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
 </Project>

@@ -16,7 +16,6 @@ namespace tBlabs.Cqrs.Middleware
 
         public async Task InvokeAsync(
             HttpContext httpContext, 
-            IMessageBus messageBus, 
             IMessageTypeProvider messageTypeProvider)
         {
             var requestPath = httpContext.Request.Path;

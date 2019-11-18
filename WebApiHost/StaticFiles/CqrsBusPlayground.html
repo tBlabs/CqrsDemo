@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8" />
@@ -95,6 +95,12 @@ to
             <td>Should be a file 'file.txt' in Download tab<br /><span class="small">with HTTP 200</span></td>
             <td><button id="SendSampleDownloadFileQuery">SEND</button></td>
         </tr>
+        <tr>
+            <td>{ "SampleMoreComplicatedCommand": { "Enumerable": ["foo", "bar"] } }<br /><span class="small">returning nothing</span></td>
+            <td id="SampleMoreComplicatedCommandReturnedValue">(press Send to see)</td>
+            <td>Should return nothing (null)<br /><span class="small">with HTTP 200</span></td>
+            <td><button id="SendSampleMoreComplicatedCommand">SEND</button></td>
+        </tr>
 	</table>
 	<br /><br /><br />
 	<span class="small" id="clock"></span><span class="small"> (should tick if page works)</span>
@@ -144,6 +150,19 @@ to
         constructor(value)
         {
             this.Value = value;
+        }
+    }
+
+    class SampleMoreComplicatedCommand
+    {
+        constructor(string, int, long, bool, strings, ints, longs) {
+            this.String = string;
+            this.Int = int;
+            this.Long = long;
+            this.Boolean = bool;
+            this.EnumerableString = strings;
+            this.EnumerableInt = ints;
+            this.EnumerableLong = longs;
         }
     }
 

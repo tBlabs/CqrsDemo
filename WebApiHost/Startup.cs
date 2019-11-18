@@ -29,7 +29,7 @@ namespace WebApiHost
 				RequestPath = "/files"
 			});
             app.UseMiddleware<DiagnosticMiddleware>();
-			app.UseCqrsBus();
+			app.UseCqrsBus(new CqrsBusMiddlewareOptions { AddStackTrace = true });
 		}
 	}
 }

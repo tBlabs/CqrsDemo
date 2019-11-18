@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,25 @@ namespace WebApiHost
                 throw new Exception("Some exception message from SampleCommand handler");
             }
 
+            return Task.CompletedTask;
+        }
+    }
+
+    public class SampleMoreComplicatedCommand : ICommand
+    {
+        public string String { get; set; }
+        public int Int { get; set; }
+        public long Long { get; set; }
+        public bool Boolean { get; set; }
+        public IEnumerable<string> EnumerableString { get; set; }
+        public IEnumerable<int> EnumerableInt { get; set; }
+        public IEnumerable<long> EnumerableLong { get; set; }
+    }
+
+    public class SampleMoreComplicatedCommandHandler : ICommandHandler<SampleMoreComplicatedCommand>
+    {
+        public Task Handle(SampleMoreComplicatedCommand command)
+        {
             return Task.CompletedTask;
         }
     }
@@ -70,7 +90,7 @@ namespace WebApiHost
         public string Value { get; set; }
     }
 
-    public class SampleSaveFileCommandHandler : ICommandHandler<SampleUploadFileCommand>
+    public class SampleUploadFileCommandHandler : ICommandHandler<SampleUploadFileCommand>
     {
         public async Task Handle(SampleUploadFileCommand command)
         {
@@ -85,9 +105,14 @@ namespace WebApiHost
     {
         public async Task<Stream> Handle(SampleDownloadFileQuery query)
         {
-            var s = new MemoryStream(Encoding.ASCII.GetBytes("Query.Value=" + query.Value)); // Do not use `using` here. Stream will be disposed in MessageBus (this is bad, I know..)
+           // var s = new MemoryStream(Encoding.ASCII.GetBytes("Query.Value=" + query.Value)); // Do not use `using` here. Stream will be disposed in MessageBus (this is bad, I know..)
+            string path = @"C:\Users\tbudre01\Desktop\testfile3.xls";      
+            FileStream fs = File.OpenRead(path);
+            Stream ms = new MemoryStream();
+            fs.CopyTo(ms);
+    //        ms.Position = 0;
 
-            return await Task.FromResult(s);
+            return await Task.FromResult(ms);
         }
     }
 

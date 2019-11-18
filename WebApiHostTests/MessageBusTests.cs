@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Testing;
 using ModuleA;
 using ModuleB;
@@ -134,7 +135,7 @@ namespace WebApiHost.Tests
             var (httpStatus, response) = await SendMessage<string>(message);
 
             httpStatus.ShouldBe(HttpStatusCode.InternalServerError);
-            response.ShouldBe("SomeExceptionMessage");
+            response.ShouldStartWith("SomeExceptionMessage");
         }
     }
 }

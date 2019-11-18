@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <ApplicationIcon />
     <StartupObject />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -11,7 +11,7 @@
     <Company>tBlabs</Company>
     <Product>Cqrs</Product>
     <Description>Middleware for Web API CQRS Framework</Description>
-    <Version>1.3.0</Version>
+    <Version>1.4.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
