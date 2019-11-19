@@ -32,7 +32,6 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
-NugetPush.*
 
 publish.bat
 packages/MSTest\.TestAdapter\.1\.2\.0/
@@ -43,8 +42,6 @@ packages/MSTest\.TestAdapter\.1\.2\.0/
 
 *.nupkg
 
-Priv
-/Priv
-Priv/
+Priv/*
 NugetKey.txt
 WebApiHost/foo.txt
