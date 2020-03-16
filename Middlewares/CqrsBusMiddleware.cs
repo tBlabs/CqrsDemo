@@ -74,9 +74,9 @@ namespace tBlabs.Cqrs.Middleware
             if (messageExecutionResult is Stream responseStream)
             {
                 responseStream.Position = 0; // Łatwo zapomnieć o resecie strumienia, ta operacja zwalnia nas z tego obowiązku ale nie pozwala na przesyłanie strumienia np od połowy...
-                responseStream.CopyTo(context.Response.Body);
+                await responseStream.CopyToAsync(context.Response.Body);
 
-                responseStream.Dispose(); // Dispołsować powinien ten kto stworzył ale nie wiem jak to inaczej rozwiązać, może wsadzić messageBus.Execute w usinga?
+                await responseStream.DisposeAsync(); // Dispołsować powinien ten kto stworzył ale nie wiem jak to inaczej rozwiązać, może wsadzić messageBus.Execute w usinga?
             }
             else
             {
@@ -93,9 +93,9 @@ namespace tBlabs.Cqrs.Middleware
 
             if (messageExecutionResult is Stream responseStream)
             {
-                responseStream.CopyTo(context.Response.Body);
+                await responseStream.CopyToAsync(context.Response.Body);
 
-                responseStream.Dispose(); // Dispołsować powinien ten kto stworzył ale nie wiem jak to inaczej rozwiązać, może wsadzić messageBus.Execute w usinga?
+                await responseStream.DisposeAsync(); // Dispołsować powinien ten kto stworzył ale nie wiem jak to inaczej rozwiązać, może wsadzić messageBus.Execute w usinga?
             }
             else
             {

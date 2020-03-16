@@ -109,10 +109,10 @@ namespace WebApiHost
             string path = @"C:\Users\tbudre01\Desktop\testfile3.xls";      
             FileStream fs = File.OpenRead(path);
             Stream ms = new MemoryStream();
-            fs.CopyTo(ms);
+            await fs.CopyToAsync(ms);
     //        ms.Position = 0;
 
-            return await Task.FromResult(ms);
+            return ms;
         }
     }
 
