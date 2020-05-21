@@ -207,7 +207,7 @@ namespace tBlabs.Cqrs.Middleware.Tests
             //// ((string)exception.ClassName).ShouldBe("System.Exception");
             //// ((string)exception.Message).ShouldBe("some exception message");
             //// ((string)exception.Source).ShouldBe("Moq");
-            fullExceptionAsJson.ShouldStartWith("some exception message");
+            fullExceptionAsJson.ShouldContain("some exception message");
         }
     }
 }

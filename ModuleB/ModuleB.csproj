@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CqrsDemo\tBlabs.Cqrs.Core.csproj" />
+    <ProjectReference Include="..\Middlewares\tBlabs.Cqrs.Middleware.csproj" />
   </ItemGroup>
 
 </Project>

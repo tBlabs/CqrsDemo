@@ -20,7 +20,7 @@ namespace tBlabs.Cqrs.Middleware.Extensions
 		{
 			response.StatusCode = (int)HttpStatusCode.NotFound;
 
-            await response.WriteAsync(ex.Message + " " + ex.StackTrace);
+            await response.WriteAsync(ex.ToString());
 		}
 
 		public static async Task InternalServerError(this HttpResponse response, string message)
@@ -34,7 +34,7 @@ namespace tBlabs.Cqrs.Middleware.Extensions
 		{
 			response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-			await response.WriteAsync(ex.Message + " " + ex.StackTrace);
+			await response.WriteAsync(ex.ToString());
 		}
 			
 		public static async Task Json(this HttpResponse response, object obj)

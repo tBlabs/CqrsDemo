@@ -79,7 +79,8 @@ namespace WebApiHost.Tests
             var query = new DoubleValueQuery { Value = 5 };
 
             var (httpStatus, response) = await SendMessage<int>(query);
-
+            
+            httpStatus.ShouldBe(HttpStatusCode.OK);
             response.ShouldBe(10);
         }
 
@@ -135,7 +136,17 @@ namespace WebApiHost.Tests
             var (httpStatus, response) = await SendMessage<string>(message);
 
             httpStatus.ShouldBe(HttpStatusCode.InternalServerError);
-            response.ShouldStartWith("SomeExceptionMessage");
+            response.ShouldContain("SomeExceptionMessage");
+        }        
+        
+        [Fact]
+        public async Task Handler_should_throw_with_non_standard_HttpStatusCode()
+        {
+            var message = new Query { Value = (-1) }; // Value==-1 make handler to throw special exception
+
+            var (httpStatus, response) = await SendMessage<string>(message);
+
+            httpStatus.ShouldBe((HttpStatusCode)444);
         }
     }
 }

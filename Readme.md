@@ -82,6 +82,19 @@ app.UseCqrsBus(new CqrsBusMiddlewareOptions() { EndpointUrl = "/SomeEndpoint" })
 ```
 Default value for `EndpointUrl` is `/CqrsBus` so there is no need to define one. Every HTTP method is accepted.
 
+### Custom http response codes
+ 
+Just implement `IHttpStatusCode` in your exception code.
+
+```
+public class CustomException : Exception, IHttpStatusCode
+{
+    public int StatusCode => 444;
+}
+```
+
+Default http code for exceptions is 500. 404 for MessageBus problems like not existing message or handler.
+
 ### Diagnostic middleware
 
 Use `app.UseMiddleware<DiagnosticMiddleware>();`

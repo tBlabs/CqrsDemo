@@ -48,10 +48,16 @@ namespace tBlabs.Cqrs.Middleware
                 }
                 catch (Exception e)
                 {
-                    if (_options.AddStackTrace)
-                        await httpContext.Response.InternalServerError(e);
-                    else
-                        await httpContext.Response.InternalServerError(e.Message);
+                    int httpStatus = 500;
+
+                    if (e is IHttpStatusCode code)
+                    {
+                        httpStatus = code.StatusCode;
+                    }
+
+                    httpContext.Response.StatusCode = httpStatus;
+
+                    await httpContext.Response.WriteAsync(_options.AddStackTrace ? e.ToString() : e.Message);
                 }
             }
             else
